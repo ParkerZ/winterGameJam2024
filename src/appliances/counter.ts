@@ -1,38 +1,56 @@
-import { vec } from "excalibur";
+import { Vector, vec } from "excalibur";
 import { Resources } from "../resources";
-import { ApplianceEventEmitter, InteractEvent } from "../events";
+import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
+import { Food } from "@/foodStuffs/food";
+import { TomatoSlice } from "@/foodStuffs/tomatoSlice";
 
 export class Counter extends Appliance {
-  constructor(applianceEventEmitter: ApplianceEventEmitter) {
+  constructor(applianceEventEmitter: ApplianceEventEmitter, pos?: Vector) {
     const sprite = Resources.Counter.toSprite();
     sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "Counter",
       sprite,
-      pos: vec(350, 150),
+      pos: pos ?? vec(300, 150),
     });
 
     this.heldItem = null;
+    this.allowsInteraction = true;
   }
 
-  public setHeldItem(incomingItem: string): boolean {
+  public setHeldItem(incomingItem: Food): boolean {
     const canSetHeldItem = this.heldItem === null;
 
-    console.log("counter setting held...", canSetHeldItem);
     if (!canSetHeldItem) {
       return false;
     }
 
     this.heldItem = incomingItem;
+    this.heldItem.unparent();
+    this.addChild(this.heldItem);
+    this.heldItem.events.on("chopped", () => {
+      this.handleTomatoChopEvent();
+    });
     return true;
   }
 
-  public getHeldItem(): string | null {
+  public getHeldItem(): Food | null {
     const item = this.heldItem;
+    if (item === null) {
+      return null;
+    }
+
+    this.removeChild(this.heldItem);
     this.heldItem = null;
-    console.log("counter getting held...", item);
     return item;
+  }
+
+  private handleTomatoChopEvent() {
+    this.heldItem.unparent();
+    this.heldItem.kill();
+    this.heldItem = new TomatoSlice();
+    this.addChild(this.heldItem);
   }
 }

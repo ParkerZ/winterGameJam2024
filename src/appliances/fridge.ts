@@ -1,7 +1,9 @@
 import { vec } from "excalibur";
 import { Resources } from "../resources";
-import { ApplianceEventEmitter, InteractEvent } from "../events";
+import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
+import { Mince } from "@/foodStuffs/mince";
+import { Food } from "@/foodStuffs/food";
 
 export class Fridge extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter) {
@@ -11,20 +13,25 @@ export class Fridge extends Appliance {
       eventEmitter: applianceEventEmitter,
       name: "Fridge",
       sprite,
-      pos: vec(150, 150),
+      pos: vec(100, 150),
     });
 
-    this.heldItem = "mince";
+    this.heldItem = null;
   }
 
-  public setHeldItem(incomingItem: string): boolean {
-    const canSetHeldItem = incomingItem === "mince";
-    console.log("fridge setting held...", canSetHeldItem);
+  public setHeldItem(incomingItem: Food): boolean {
+    const canSetHeldItem = incomingItem instanceof Mince;
+
+    if (!canSetHeldItem) {
+      return false;
+    }
+
+    incomingItem.unparent();
+
     return canSetHeldItem;
   }
 
-  public getHeldItem(): string | null {
-    console.log("fridge getting held...", this.heldItem);
-    return this.heldItem;
+  public getHeldItem(): Food | null {
+    return new Mince();
   }
 }

@@ -1,12 +1,23 @@
-import { ApplianceEventEmitter, InteractEvent } from "@/events";
-import { Actor, Color, Engine, Sprite, Vector, vec } from "excalibur";
+import { ApplianceEventEmitter, ExchangeEvent, InteractEvent } from "@/events";
+import { Food } from "@/foodStuffs/food";
+import {
+  Actor,
+  Buttons,
+  Color,
+  Engine,
+  PointerButton,
+  Sprite,
+  Vector,
+  vec,
+} from "excalibur";
 
 export abstract class Appliance extends Actor {
   private sprite: Sprite;
 
   protected tempHighlight: Actor;
   protected state: "idle" | "hovered" | "end-hover";
-  protected heldItem: string | null;
+  protected allowsInteraction: boolean = false;
+  protected heldItem: Food | null;
 
   protected eventEmitter: ApplianceEventEmitter;
 
@@ -31,6 +42,8 @@ export abstract class Appliance extends Actor {
 
     this.heldItem = null;
 
+    this.state = "idle";
+
     this.pointer.useGraphicsBounds = true;
 
     // TODO: this should move to the child in some fashion
@@ -47,7 +60,17 @@ export abstract class Appliance extends Actor {
     this.graphics.add(this.sprite);
 
     this.on("pointerdown", (evt) => {
-      this.eventEmitter.emit("interact", new InteractEvent(this));
+      if (evt.button === PointerButton.Left) {
+        this.eventEmitter.emit("exchange", new ExchangeEvent(this));
+      } else if (evt.button === PointerButton.Right) {
+        if (this.allowsInteraction) {
+          this.eventEmitter.emit("interactStart", new InteractEvent(this));
+        }
+      }
+    });
+
+    this.on("pointerup", (evt) => {
+      this.stopInteract();
     });
 
     this.on("pointerenter", (evt) => {
@@ -69,12 +92,25 @@ export abstract class Appliance extends Actor {
     ) {
       this.state = "idle";
       engine.remove(this.tempHighlight);
+      this.stopInteract();
     }
+  }
+
+  public hasItem(): boolean {
+    return this.heldItem !== null;
+  }
+
+  private stopInteract() {
+    if (this.heldItem && this.heldItem.getState() === "chopping") {
+      this.heldItem.setState("idle");
+    }
+
+    this.eventEmitter.emit("interactStop");
   }
 
   // Methods to handle interaction
   // Returns success of operation
-  public abstract setHeldItem(incomingItem: string): boolean;
+  public abstract setHeldItem(incomingItem: Food): boolean;
   // Returns held item if any
-  public abstract getHeldItem(): string | null;
+  public abstract getHeldItem(): Food | null;
 }

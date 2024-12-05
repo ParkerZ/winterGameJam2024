@@ -1,7 +1,9 @@
 import { vec } from "excalibur";
 import { Resources } from "../resources";
-import { ApplianceEventEmitter, InteractEvent } from "../events";
+import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
+import { Food } from "@/foodStuffs/food";
+import { Bun } from "@/foodStuffs/bun";
 
 export class BunCrate extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter) {
@@ -11,20 +13,25 @@ export class BunCrate extends Appliance {
       eventEmitter: applianceEventEmitter,
       name: "BunCrate",
       sprite,
-      pos: vec(150, 500),
+      pos: vec(100, 500),
     });
 
-    this.heldItem = "bun";
+    this.heldItem = null;
   }
 
-  public setHeldItem(incomingItem: string): boolean {
-    const canSetHeldItem = incomingItem === "bun";
-    console.log("bunCrate setting held...", canSetHeldItem);
+  public setHeldItem(incomingItem: Food): boolean {
+    const canSetHeldItem = incomingItem instanceof Bun;
+
+    if (!canSetHeldItem) {
+      return false;
+    }
+
+    incomingItem.unparent();
+
     return canSetHeldItem;
   }
 
-  public getHeldItem(): string | null {
-    console.log("bunCrate getting held...", this.heldItem);
-    return this.heldItem;
+  public getHeldItem(): Food | null {
+    return new Bun();
   }
 }

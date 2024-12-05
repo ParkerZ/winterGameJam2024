@@ -1,7 +1,11 @@
 import { vec } from "excalibur";
 import { Resources } from "../resources";
-import { ApplianceEventEmitter, InteractEvent } from "../events";
+import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
+import { Mince } from "@/foodStuffs/mince";
+import { Bun } from "@/foodStuffs/bun";
+import { Food } from "@/foodStuffs/food";
+import { Patty } from "@/foodStuffs/patty";
 
 export class Stove extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter) {
@@ -11,28 +15,47 @@ export class Stove extends Appliance {
       eventEmitter: applianceEventEmitter,
       name: "Stove",
       sprite,
-      pos: vec(550, 150),
+      pos: vec(700, 150),
     });
 
     this.heldItem = null;
   }
 
-  public setHeldItem(incomingItem: string): boolean {
+  public setHeldItem(incomingItem: Food): boolean {
     const canSetHeldItem =
-      this.heldItem === null && ["mince", "burger"].includes(incomingItem);
-    console.log("stove setting held...", canSetHeldItem);
+      this.heldItem === null &&
+      (incomingItem instanceof Mince || incomingItem instanceof Patty);
     if (!canSetHeldItem) {
       return false;
     }
 
     this.heldItem = incomingItem;
+    this.heldItem.unparent();
+    this.addChild(this.heldItem);
+    this.heldItem.setState("cooking");
+    this.heldItem.events.on("cooked", () => {
+      this.handleMinceCookedEvent();
+    });
+
     return true;
   }
 
-  public getHeldItem(): string | null {
+  public getHeldItem(): Food | null {
     const item = this.heldItem;
+    if (item === null) {
+      return null;
+    }
+
+    this.heldItem.setState("idle");
+    this.removeChild(this.heldItem);
     this.heldItem = null;
-    console.log("stove getting held...", item);
     return item;
+  }
+
+  private handleMinceCookedEvent() {
+    this.heldItem.unparent();
+    this.heldItem.kill();
+    this.heldItem = new Patty();
+    this.addChild(this.heldItem);
   }
 }

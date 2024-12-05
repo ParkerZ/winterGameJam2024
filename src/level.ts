@@ -4,6 +4,7 @@ import {
   ExcaliburGraphicsContext,
   Scene,
   SceneActivationContext,
+  vec,
 } from "excalibur";
 import { Fridge } from "./appliances/fridge";
 import { Glove } from "./glove";
@@ -12,6 +13,8 @@ import { Counter } from "./appliances/counter";
 import { Stove } from "./appliances/stove";
 import { Trash } from "./appliances/trash";
 import { BunCrate } from "./appliances/bunCrate";
+import { TomatoCrate } from "./appliances/tomatoCrate";
+import { CheeseCrate } from "./appliances/cheeseCrate";
 
 export class MyLevel extends Scene {
   override onInitialize(engine: Engine): void {
@@ -19,16 +22,25 @@ export class MyLevel extends Scene {
     const applianceEventEmitter = new ApplianceEventEmitter();
 
     const door = new Fridge(applianceEventEmitter);
-    const counter = new Counter(applianceEventEmitter);
+    const counter1 = new Counter(applianceEventEmitter);
+    const counter2 = new Counter(
+      applianceEventEmitter,
+      counter1.pos.add(vec(200, 0))
+    );
     const stove = new Stove(applianceEventEmitter);
     const bunCrate = new BunCrate(applianceEventEmitter);
+    const tomatoCrate = new TomatoCrate(applianceEventEmitter);
+    const cheeseCrate = new CheeseCrate(applianceEventEmitter);
     const trash = new Trash(applianceEventEmitter);
     const glove = new Glove(applianceEventEmitter);
 
     this.add(door);
-    this.add(counter);
+    this.add(counter1);
+    this.add(counter2);
     this.add(stove);
     this.add(bunCrate);
+    this.add(tomatoCrate);
+    this.add(cheeseCrate);
     this.add(trash);
     this.add(glove);
   }
