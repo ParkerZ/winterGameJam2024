@@ -1,6 +1,7 @@
-import { Color, DisplayMode, Engine, FadeInOut } from "excalibur";
+import { Color, CrossFade, Engine, FadeInOut } from "excalibur";
 import { loader } from "./resources";
-import { MyLevel } from "./level";
+import { Kitchen } from "./scenes/kitchen";
+import { Shop } from "./scenes/shop";
 
 // Goal is to keep main.ts small and just enough to configure the engine
 
@@ -8,19 +9,32 @@ const game = new Engine({
   width: 800, // Logical width and height in game pixels
   height: 600,
   scenes: {
-    start: MyLevel,
+    kitchen: {
+      scene: Kitchen,
+      transitions: {
+        in: new CrossFade({
+          duration: 500,
+          direction: "in",
+          blockInput: true,
+        }),
+      },
+    },
+    shop: {
+      scene: Shop,
+      transitions: {
+        in: new CrossFade({
+          duration: 500,
+          direction: "in",
+          blockInput: true,
+        }),
+      },
+    },
   },
 });
 
 game
-  .start("start", {
-    loader, // Optional loader (but needed for loading images/sounds)
-    inTransition: new FadeInOut({
-      // Optional in transition
-      duration: 1000,
-      direction: "in",
-      color: Color.ExcaliburBlue,
-    }),
+  .start("kitchen", {
+    loader,
   })
   .then(() => {
     // Do something after the game starts

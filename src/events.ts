@@ -2,6 +2,8 @@ import { ActorEvents, EventEmitter, GameEvent } from "excalibur";
 import { Fridge } from "./appliances/fridge";
 import { Appliance } from "./appliances/appliance";
 import { Food } from "./foodStuffs/food";
+import { GuestOrder } from "./guests/guestOrder";
+import { Guest } from "./guests/guest";
 
 export class ExchangeEvent extends GameEvent<Appliance> {
   constructor(public appliance: Appliance) {
@@ -48,6 +50,39 @@ export type FoodEvents = {
 };
 
 export class FoodEventEmitter extends EventEmitter<ActorEvents & FoodEvents> {
+  constructor() {
+    super();
+  }
+}
+
+export class ClearOrderEvent extends GameEvent<Guest> {
+  constructor(public guest: Guest) {
+    super();
+  }
+}
+
+export class AutoFulfillEvent extends GameEvent<Guest> {
+  constructor() {
+    super();
+  }
+}
+
+export class GuestInteractEvent extends GameEvent<Guest> {
+  constructor(public guest: Guest) {
+    super();
+  }
+}
+
+export type GuestEvents = {
+  interact: GuestInteractEvent;
+  clearOrder: ClearOrderEvent;
+  autoFulfillActivate: AutoFulfillEvent;
+  // abilityConfirm
+  // abilityCancel
+  autoFulfillDeactivate: AutoFulfillEvent;
+};
+
+export class GuestEventEmitter extends EventEmitter<ActorEvents & GuestEvents> {
   constructor() {
     super();
   }

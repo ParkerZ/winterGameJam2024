@@ -6,12 +6,13 @@ import {
   Color,
   Engine,
   PointerButton,
+  ScreenElement,
   Sprite,
   Vector,
   vec,
 } from "excalibur";
 
-export abstract class Appliance extends Actor {
+export abstract class Appliance extends ScreenElement {
   private sprite: Sprite;
 
   protected tempHighlight: Actor;
@@ -35,6 +36,7 @@ export abstract class Appliance extends Actor {
     super({
       name,
       pos,
+      anchor: Vector.Half,
     });
 
     this.eventEmitter = eventEmitter;
@@ -47,12 +49,13 @@ export abstract class Appliance extends Actor {
     this.pointer.useGraphicsBounds = true;
 
     // TODO: this should move to the child in some fashion
-    this.tempHighlight = new Actor({
+    this.tempHighlight = new ScreenElement({
       x: this.pos.x,
       y: this.pos.y,
-      width: 100,
-      height: 100,
+      width: 50,
+      height: 50,
       color: Color.Green,
+      anchor: Vector.Half,
     });
   }
 

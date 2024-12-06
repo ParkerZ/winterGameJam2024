@@ -1,7 +1,11 @@
-import { Actor, Engine, EventEmitter, Vector, vec } from "excalibur";
+import { Engine, Scene, ScreenElement, Vector, vec } from "excalibur";
 import { Resources } from "./resources";
 import { Fridge } from "./appliances/fridge";
-import { ApplianceEventEmitter } from "./events";
+import {
+  ApplianceEventEmitter,
+  AutoFulfillEvent,
+  GuestEventEmitter,
+} from "./events";
 import { Appliance } from "./appliances/appliance";
 import { Food } from "./foodStuffs/food";
 import { Burger } from "./foodStuffs/burger";
@@ -9,21 +13,41 @@ import { Bun } from "./foodStuffs/bun";
 import { BunCrate } from "./appliances/bunCrate";
 import { TomatoCrate } from "./appliances/tomatoCrate";
 import { CheeseCrate } from "./appliances/cheeseCrate";
+import { GuestOrder } from "./guests/guestOrder";
+import { Guest, GuestStates } from "./guests/guest";
 
-export class Glove extends Actor {
+export type GuestInteractionOverride = "none" | "autoFulfill";
+
+export const GuestInteractionOverrides: Record<
+  string,
+  GuestInteractionOverride
+> = {
+  None: "none",
+  AutoFulfill: "autoFulfill",
+};
+
+export class Glove extends ScreenElement {
   protected heldItem: Food | null;
   protected applianceEventEmitter: ApplianceEventEmitter;
-  private heldItemOffset: Vector = vec(50, 50);
+  protected guestEventEmitter: GuestEventEmitter;
+  protected guestInteractionOverride: GuestInteractionOverride;
 
-  constructor(applianceEventEmitter: ApplianceEventEmitter) {
+  constructor(
+    applianceEventEmitter: ApplianceEventEmitter,
+    guestEventEmitter: GuestEventEmitter
+  ) {
     super({
       name: "Glove",
-      x: 2,
+      z: 2,
+      anchor: Vector.Half,
     });
 
     this.applianceEventEmitter = applianceEventEmitter;
+    this.guestEventEmitter = guestEventEmitter;
 
     this.heldItem = null;
+
+    this.guestInteractionOverride = GuestInteractionOverrides.None;
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -32,15 +56,34 @@ export class Glove extends Actor {
     this.graphics.use(sprite);
 
     this.applianceEventEmitter.on("exchange", (evt) => {
-      this.onExchangeWithAppliance(evt.appliance);
+      if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
+        this.onExchangeWithAppliance(evt.appliance);
+      }
     });
 
     this.applianceEventEmitter.on("interactStart", (evt) => {
-      this.onInteractWithApplianceStart(evt.appliance);
+      if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
+        this.onInteractWithApplianceStart(evt.appliance);
+      }
     });
 
     this.applianceEventEmitter.on("InteractStop", (evt) => {
-      this.onInteractWithApplianceStop(evt.appliance);
+      if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
+        this.onInteractWithApplianceStop(evt.appliance);
+      }
+    });
+
+    this.guestEventEmitter.on("interact", (evt) => {
+      this.interactWithGuest(evt.guest);
+    });
+
+    this.guestEventEmitter.on("autoFulfillActivate", (evt) => {
+      this.guestInteractionOverride = GuestInteractionOverrides.AutoFulfill;
+    });
+
+    // TODO: can probably be made more generic
+    this.guestEventEmitter.on("autoFulfillDectivate", (evt) => {
+      this.guestInteractionOverride = GuestInteractionOverrides.None;
     });
   }
 
@@ -163,4 +206,65 @@ export class Glove extends Actor {
   }
 
   private onInteractWithApplianceStop(appliance: Appliance) {}
+
+  private interactWithGuest(guest: Guest) {
+    const guestState = guest.getState();
+
+    switch (guestState) {
+      case GuestStates.Idle:
+        this.interactWithIdleGuest(guest);
+        break;
+      case GuestStates.Ordering:
+        this.interactWithOrderingGuest(guest);
+        break;
+    }
+  }
+
+  private interactWithIdleGuest(guest: Guest) {
+    // Can't initiate interaction if in auto fulfill mode
+    if (
+      this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
+    ) {
+      return;
+    }
+
+    // Can't initiate interaction if holding something
+    if (this.heldItem) {
+      return;
+    }
+
+    guest.orderOrActivate();
+  }
+
+  private interactWithOrderingGuest(guest: Guest) {
+    // Auto fulfill orders in this mode, no item will be held in this mode
+    if (
+      this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
+    ) {
+      guest.completeOrder();
+      this.guestEventEmitter.emit(
+        "autoFulfillDeactivate",
+        new AutoFulfillEvent()
+      );
+
+      return;
+    }
+
+    // Must be holding a burger to fulfill
+    if (!this.heldItem || !(this.heldItem instanceof Burger)) {
+      return;
+    }
+
+    const success = guest.doesBurgerMatchOrder(this.heldItem);
+    if (success) {
+      this.removeChild(this.heldItem);
+      this.heldItem = null;
+      guest.completeOrder();
+    }
+  }
+
+  onPreKill(scene: Scene<unknown>): void {
+    this.applianceEventEmitter.clear();
+    this.guestEventEmitter.clear();
+  }
 }

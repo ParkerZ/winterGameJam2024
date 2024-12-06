@@ -1,8 +1,8 @@
 import { FoodEventEmitter } from "@/events";
-import { Actor, Engine, Sprite, Vector } from "excalibur";
+import { Actor, Engine, ScreenElement, Sprite, Vector } from "excalibur";
 
 export type FoodState = "idle" | "cooking" | "chopping";
-export class Food extends Actor {
+export class Food extends ScreenElement {
   public events = new FoodEventEmitter();
   protected sprite: Sprite;
   protected state: FoodState;
@@ -11,7 +11,7 @@ export class Food extends Actor {
   public allowsInteraction: boolean = false;
 
   constructor({ name, sprite }: { name: string; sprite: Sprite }) {
-    super({ name });
+    super({ name, anchor: Vector.Half });
 
     this.sprite = sprite;
     this.state = "idle";

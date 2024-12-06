@@ -11,7 +11,7 @@ const burgerIngredientSpriteMap = {
 export class Burger extends Food {
   protected ingredients: Set<string>;
 
-  constructor() {
+  constructor(ingredients: Set<string> = new Set()) {
     const sprite = Resources.BunBottom.toSprite();
     sprite.scale = vec(0.5, 0.5);
     super({
@@ -19,7 +19,7 @@ export class Burger extends Food {
       sprite,
     });
 
-    this.ingredients = new Set();
+    this.ingredients = new Set(ingredients);
     this.isBurgerCompatible = true;
     this.isBurgerBase = true;
   }
@@ -47,7 +47,6 @@ export class Burger extends Food {
     const newSprite = Resources.BunTop.toSprite();
     newSprite.scale = vec(0.5, 0.5);
     members.push({ graphic: newSprite, offset: vec(0, -20 * members.length) });
-
     this.graphics.use(new GraphicsGroup({ members }));
   }
 
@@ -65,5 +64,9 @@ export class Burger extends Food {
     this.ingredients.add(ingredient.name);
     this.updateGraphics();
     return true;
+  }
+
+  public getIngredients(): Set<string> {
+    return this.ingredients;
   }
 }

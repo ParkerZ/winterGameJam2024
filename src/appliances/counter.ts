@@ -6,14 +6,14 @@ import { Food } from "@/foodStuffs/food";
 import { TomatoSlice } from "@/foodStuffs/tomatoSlice";
 
 export class Counter extends Appliance {
-  constructor(applianceEventEmitter: ApplianceEventEmitter, pos?: Vector) {
+  constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
     const sprite = Resources.Counter.toSprite();
     sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "Counter",
       sprite,
-      pos: pos ?? vec(300, 150),
+      pos,
     });
 
     this.heldItem = null;

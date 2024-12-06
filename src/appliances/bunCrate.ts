@@ -1,4 +1,4 @@
-import { vec } from "excalibur";
+import { Vector, vec } from "excalibur";
 import { Resources } from "../resources";
 import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
@@ -6,14 +6,14 @@ import { Food } from "@/foodStuffs/food";
 import { Bun } from "@/foodStuffs/bun";
 
 export class BunCrate extends Appliance {
-  constructor(applianceEventEmitter: ApplianceEventEmitter) {
+  constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
     const sprite = Resources.BunCrate.toSprite();
     sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "BunCrate",
       sprite,
-      pos: vec(100, 500),
+      pos,
     });
 
     this.heldItem = null;
