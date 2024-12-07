@@ -17,6 +17,7 @@ import guest3 from "./images/tempGuest3.png";
 import guest4 from "./images/tempGuest4.png";
 import guest5 from "./images/tempGuest5.png";
 import guest6 from "./images/tempGuest6.png";
+import guest7 from "./images/tempGuest7.png";
 import mince from "./images/tempMince.png";
 import orderBanner from "./images/tempOrderBanner.png";
 import stove from "./images/tempStove.png";
@@ -44,6 +45,7 @@ export const Resources = {
   Guest4: new ImageSource(guest4),
   Guest5: new ImageSource(guest5),
   Guest6: new ImageSource(guest6),
+  Guest7: new ImageSource(guest7),
   Mince: new ImageSource(mince),
   OrderBanner: new ImageSource(orderBanner),
   Stove: new ImageSource(stove),

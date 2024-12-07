@@ -15,8 +15,9 @@ import { TomatoCrate } from "./appliances/tomatoCrate";
 import { CheeseCrate } from "./appliances/cheeseCrate";
 import { GuestOrder } from "./guests/guestOrder";
 import { Guest, GuestStates } from "./guests/guest";
+import { PlayerData } from "./playerData";
 
-export type GuestInteractionOverride = "none" | "autoFulfill";
+export type GuestInteractionOverride = "none" | "autoFulfill" | "remove";
 
 export const GuestInteractionOverrides: Record<
   string,
@@ -24,6 +25,7 @@ export const GuestInteractionOverrides: Record<
 > = {
   None: "none",
   AutoFulfill: "autoFulfill",
+  Remove: "remove",
 };
 
 export class Glove extends ScreenElement {
@@ -81,8 +83,17 @@ export class Glove extends ScreenElement {
       this.guestInteractionOverride = GuestInteractionOverrides.AutoFulfill;
     });
 
+    this.guestEventEmitter.on("removeActivate", (evt) => {
+      this.guestInteractionOverride = GuestInteractionOverrides.Remove;
+    });
+
     // TODO: can probably be made more generic
+    // TODO: update to use generic activation complete
     this.guestEventEmitter.on("autoFulfillDectivate", (evt) => {
+      this.guestInteractionOverride = GuestInteractionOverrides.None;
+    });
+
+    this.guestEventEmitter.on("activateComplete", (evt) => {
       this.guestInteractionOverride = GuestInteractionOverrides.None;
     });
   }
@@ -221,7 +232,14 @@ export class Glove extends ScreenElement {
   }
 
   private interactWithIdleGuest(guest: Guest) {
+    console.log(this.guestInteractionOverride);
     // Can't initiate interaction if in auto fulfill mode
+    if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
+      PlayerData.remove(guest);
+      this.guestEventEmitter.emit("activateComplete", new AutoFulfillEvent());
+      return;
+    }
+
     if (
       this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
     ) {
@@ -237,6 +255,13 @@ export class Glove extends ScreenElement {
   }
 
   private interactWithOrderingGuest(guest: Guest) {
+    console.log(this.guestInteractionOverride);
+    if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
+      PlayerData.remove(guest);
+      this.guestEventEmitter.emit("activateComplete", new AutoFulfillEvent());
+      return;
+    }
+
     // Auto fulfill orders in this mode, no item will be held in this mode
     if (
       this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill

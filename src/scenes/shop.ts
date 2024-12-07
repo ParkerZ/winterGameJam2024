@@ -3,6 +3,7 @@ import { GuestFreeBuzz } from "@/guests/guestFreeBuzz";
 import { GuestInviteCard } from "@/guests/guestInviteCard";
 import { GuestMidBuzz } from "@/guests/guestMidBuzz";
 import { GuestMidUpgrade } from "@/guests/guestMidUpgrade";
+import { GuestRemove } from "@/guests/guestRemove";
 import { GuestSimpleBuzz } from "@/guests/guestSimpleBuzz";
 import { GuestSimpleCash } from "@/guests/guestSimpleCash";
 import { PlayerData } from "@/playerData";
@@ -55,6 +56,12 @@ export class Shop extends Scene {
       buzzCost: 8,
     });
 
+    const invite7 = new GuestInviteCard({
+      pos: vec(600, 450),
+      GuestType: GuestRemove,
+      buzzCost: 2,
+    });
+
     const button = new OpenKitchenButton();
 
     this.add(buzzCounter);
@@ -64,7 +71,8 @@ export class Shop extends Scene {
     this.add(invite3);
     this.add(invite4);
     this.add(invite5);
-    this.add(invite6);
+    // this.add(invite6);
+    this.add(invite7);
 
     this.add(button);
   }

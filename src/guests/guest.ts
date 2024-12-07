@@ -7,6 +7,7 @@ import {
   GuestEventEmitter,
   GuestInteractEvent,
 } from "@/events";
+import { PlayerData } from "@/playerData";
 
 export type GuestState = "idle" | "ordering" | "activating" | "cleanup";
 
@@ -96,6 +97,15 @@ export class Guest extends ScreenElement {
 
   // Use this for any effects after order completion
   protected cleanup() {}
+
+  public remove() {
+    if (this.order) {
+      this.removeChild(this.order);
+      this.order.kill();
+      this.order = null;
+    }
+    this.state = GuestStates.Cleanup;
+  }
 
   onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
     if (this.state === GuestStates.Cleanup) {
