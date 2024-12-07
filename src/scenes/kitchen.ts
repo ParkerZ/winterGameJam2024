@@ -13,6 +13,7 @@ import { Guest } from "../guests/guest";
 import { PlayerData } from "../playerData";
 import { OpenShopButton } from "../ui/openShopButton";
 import { BuzzCounter } from "@/ui/buzzCounter";
+import { CashCounter } from "@/ui/cashCounter";
 
 export class Kitchen extends Scene {
   protected allGuests: Array<Guest> = [];
@@ -48,6 +49,7 @@ export class Kitchen extends Scene {
     console.log("queued guests", this.queuedGuests);
 
     const buzzCounter = new BuzzCounter(vec(25, 25));
+    const cashCounter = new CashCounter(vec(25, 75));
 
     const fridge = new Fridge(applianceEventEmitter, vec(100, 250));
     const counter1 = new Counter(applianceEventEmitter, vec(300, 250));
@@ -63,6 +65,8 @@ export class Kitchen extends Scene {
     const glove = new Glove(applianceEventEmitter, guestEventEmitter);
 
     this.add(buzzCounter);
+    this.add(cashCounter);
+
     this.add(fridge);
     this.add(counter1);
     this.add(counter2);
@@ -114,7 +118,7 @@ export class Kitchen extends Scene {
     if (now - this.lastGuestTime >= 2000) {
       this.lastGuestTime = 0;
       const guest = this.queuedGuests.pop();
-      console.log("ADDING GUEST", guest);
+      guest.onAddToScene();
       this.add(guest);
     }
   }

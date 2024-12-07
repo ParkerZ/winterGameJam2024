@@ -10,7 +10,7 @@ export class Reward {
   }
 
   public distribute() {
-    PlayerData.buzz += this.buzz;
-    PlayerData.cash += this.cash;
+    PlayerData.buzz = Math.max(PlayerData.buzz + this.buzz, 0);
+    PlayerData.cash = Math.max(PlayerData.cash + this.cash, 0);
   }
 }

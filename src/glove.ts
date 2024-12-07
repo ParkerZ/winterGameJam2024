@@ -2,8 +2,8 @@ import { Engine, Scene, ScreenElement, Vector, vec } from "excalibur";
 import { Resources } from "./resources";
 import { Fridge } from "./appliances/fridge";
 import {
+  AbilityCompleteEvent,
   ApplianceEventEmitter,
-  AutoFulfillEvent,
   GuestEventEmitter,
 } from "./events";
 import { Appliance } from "./appliances/appliance";
@@ -87,13 +87,11 @@ export class Glove extends ScreenElement {
       this.guestInteractionOverride = GuestInteractionOverrides.Remove;
     });
 
-    // TODO: can probably be made more generic
-    // TODO: update to use generic activation complete
-    this.guestEventEmitter.on("autoFulfillDectivate", (evt) => {
+    this.guestEventEmitter.on("abilityConfirm", (evt) => {
       this.guestInteractionOverride = GuestInteractionOverrides.None;
     });
 
-    this.guestEventEmitter.on("activateComplete", (evt) => {
+    this.guestEventEmitter.on("abilityCancel", (evt) => {
       this.guestInteractionOverride = GuestInteractionOverrides.None;
     });
   }
@@ -228,18 +226,20 @@ export class Glove extends ScreenElement {
       case GuestStates.Ordering:
         this.interactWithOrderingGuest(guest);
         break;
+      case GuestStates.Activating:
+        this.interactWithActiveGuest(guest);
+        break;
     }
   }
 
   private interactWithIdleGuest(guest: Guest) {
-    console.log(this.guestInteractionOverride);
-    // Can't initiate interaction if in auto fulfill mode
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
       PlayerData.remove(guest);
-      this.guestEventEmitter.emit("activateComplete", new AutoFulfillEvent());
+      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
       return;
     }
 
+    // Can't initiate interaction if in auto fulfill mode
     if (
       this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
     ) {
@@ -255,10 +255,9 @@ export class Glove extends ScreenElement {
   }
 
   private interactWithOrderingGuest(guest: Guest) {
-    console.log(this.guestInteractionOverride);
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
       PlayerData.remove(guest);
-      this.guestEventEmitter.emit("activateComplete", new AutoFulfillEvent());
+      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
       return;
     }
 
@@ -267,10 +266,7 @@ export class Glove extends ScreenElement {
       this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
     ) {
       guest.completeOrder();
-      this.guestEventEmitter.emit(
-        "autoFulfillDeactivate",
-        new AutoFulfillEvent()
-      );
+      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
 
       return;
     }
@@ -285,6 +281,14 @@ export class Glove extends ScreenElement {
       this.removeChild(this.heldItem);
       this.heldItem = null;
       guest.completeOrder();
+    }
+  }
+
+  private interactWithActiveGuest(guest: Guest) {
+    if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
+      PlayerData.remove(guest);
+      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
+      return;
     }
   }
 

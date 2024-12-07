@@ -4,7 +4,7 @@ import { GuestSimpleBuzz } from "./guests/guestSimpleBuzz";
 import { GuestSimpleCash } from "./guests/guestSimpleCash";
 
 export class PlayerData {
-  public static buzz: number = 2;
+  public static buzz: number = 0;
   public static cash: number = 0;
 
   public static deck: Array<Guest> = [

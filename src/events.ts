@@ -67,7 +67,19 @@ export class GuestInteractEvent extends GameEvent<Guest> {
   }
 }
 
-export class AutoFulfillEvent extends GameEvent<Guest> {
+export class AbilityActivateEvent extends GameEvent<Guest> {
+  constructor() {
+    super();
+  }
+}
+
+export class AbilityCompleteEvent extends GameEvent<Guest> {
+  constructor() {
+    super();
+  }
+}
+
+export class AbilityCancelEvent extends GameEvent<Guest> {
   constructor() {
     super();
   }
@@ -76,12 +88,10 @@ export class AutoFulfillEvent extends GameEvent<Guest> {
 export type GuestEvents = {
   interact: GuestInteractEvent;
   clearOrder: ClearOrderEvent;
-  autoFulfillActivate: AutoFulfillEvent;
-  removeActivate: AutoFulfillEvent;
-  // abilityConfirm
-  // abilityCancel
-  autoFulfillDeactivate: AutoFulfillEvent;
-  activateComplete: AutoFulfillEvent;
+  autoFulfillActivate: AbilityActivateEvent;
+  removeActivate: AbilityActivateEvent;
+  abilityConfirm: AbilityCompleteEvent;
+  abilityCancel: AbilityCancelEvent;
 };
 
 export class GuestEventEmitter extends EventEmitter<ActorEvents & GuestEvents> {

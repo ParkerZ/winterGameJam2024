@@ -9,9 +9,15 @@ import {
 } from "@/events";
 import { PlayerData } from "@/playerData";
 
-export type GuestState = "idle" | "ordering" | "activating" | "cleanup";
+export type GuestState =
+  | "dormant"
+  | "idle"
+  | "ordering"
+  | "activating"
+  | "cleanup";
 
 export const GuestStates: Record<string, GuestState> = {
+  Dormant: "dormant",
   Idle: "idle",
   Ordering: "ordering",
   Activating: "activating",
@@ -35,7 +41,7 @@ export class Guest extends ScreenElement {
     });
 
     this.eventEmitter = eventEmitter;
-    this.state = GuestStates.Idle;
+    this.state = GuestStates.Dormant;
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -53,6 +59,10 @@ export class Guest extends ScreenElement {
 
   public attachEventEmitter(eventEmitter: GuestEventEmitter) {
     this.eventEmitter = eventEmitter;
+  }
+
+  public onAddToScene() {
+    this.state = GuestStates.Idle;
   }
 
   public getState(): GuestState {
@@ -110,7 +120,7 @@ export class Guest extends ScreenElement {
   onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
     if (this.state === GuestStates.Cleanup) {
       this.cleanup();
-      this.state = GuestStates.Idle;
+      this.state = GuestStates.Dormant;
       this.kill();
     }
   }

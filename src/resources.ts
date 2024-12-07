@@ -18,6 +18,12 @@ import guest4 from "./images/tempGuest4.png";
 import guest5 from "./images/tempGuest5.png";
 import guest6 from "./images/tempGuest6.png";
 import guest7 from "./images/tempGuest7.png";
+import guest8 from "./images/tempGuest8.png";
+import guest9 from "./images/tempGuest9.png";
+import guest10 from "./images/tempGuest10.png";
+import guest11 from "./images/tempGuest11.png";
+import guest12 from "./images/tempGuest12.png";
+import guest13 from "./images/tempGuest13.png";
 import mince from "./images/tempMince.png";
 import orderBanner from "./images/tempOrderBanner.png";
 import stove from "./images/tempStove.png";
@@ -46,6 +52,12 @@ export const Resources = {
   Guest5: new ImageSource(guest5),
   Guest6: new ImageSource(guest6),
   Guest7: new ImageSource(guest7),
+  Guest8: new ImageSource(guest8),
+  Guest9: new ImageSource(guest9),
+  Guest10: new ImageSource(guest10),
+  Guest11: new ImageSource(guest11),
+  Guest12: new ImageSource(guest12),
+  Guest13: new ImageSource(guest13),
   Mince: new ImageSource(mince),
   OrderBanner: new ImageSource(orderBanner),
   Stove: new ImageSource(stove),

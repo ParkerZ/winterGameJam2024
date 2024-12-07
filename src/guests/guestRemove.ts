@@ -1,4 +1,4 @@
-import { AutoFulfillEvent, GuestEventEmitter } from "@/events";
+import { AbilityActivateEvent, GuestEventEmitter } from "@/events";
 import { Guest, GuestStates } from "./guest";
 import { vec } from "excalibur";
 import { Reward } from "@/reward";
@@ -18,9 +18,8 @@ export class GuestRemove extends Guest {
   override activateAbility(): void {
     // Emit event so that glove knows to change interactions
     this.state = GuestStates.Activating;
-    this.eventEmitter.emit("removeActivate", new AutoFulfillEvent());
-    this.eventEmitter.on("activateComplete", () => {
-      console.log("activate complete");
+    this.eventEmitter.emit("removeActivate", new AbilityActivateEvent());
+    this.eventEmitter.on("abilityConfirm", () => {
       this.completeOrder();
     });
   }
