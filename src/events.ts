@@ -74,7 +74,7 @@ export class AbilityActivateEvent extends GameEvent<Guest> {
 }
 
 export class AbilityCompleteEvent extends GameEvent<Guest> {
-  constructor() {
+  constructor(public guest: Guest) {
     super();
   }
 }
@@ -89,8 +89,9 @@ export type GuestEvents = {
   interact: GuestInteractEvent;
   clearOrder: ClearOrderEvent;
   autoFulfillActivate: AbilityActivateEvent;
+  autoFulfillConfirm: AbilityCompleteEvent;
   removeActivate: AbilityActivateEvent;
-  abilityConfirm: AbilityCompleteEvent;
+  removeConfirm: AbilityCompleteEvent;
   abilityCancel: AbilityCancelEvent;
 };
 

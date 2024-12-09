@@ -3,15 +3,15 @@ import { Food } from "./food";
 import { Engine, vec } from "excalibur";
 import { PlayerData } from "@/playerData";
 
-export class Tomato extends Food {
+export class Lettuce extends Food {
   private elapsedChopTime: number;
   private lastChopCheckTime: number;
 
   constructor() {
-    const sprite = Resources.Tomato.toSprite();
+    const sprite = Resources.Lettuce.toSprite();
     sprite.scale = vec(0.5, 0.5);
     super({
-      name: "Tomato",
+      name: "Lettuce",
       sprite,
     });
 

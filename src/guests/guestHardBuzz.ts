@@ -13,5 +13,6 @@ export class GuestHardBuzz extends Guest {
     this.difficulty = DifficultyOptions.Hard;
     this.sprite = Resources.Guest9.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.canBeAutoFulfilled = true;
   }
 }

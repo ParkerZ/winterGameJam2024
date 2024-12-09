@@ -4,7 +4,7 @@ import { Engine, ScreenElement, Vector, vec } from "excalibur";
 export class OpenKitchenButton extends ScreenElement {
   constructor() {
     super({
-      pos: vec(400, 300),
+      pos: vec(710, 450),
       anchor: Vector.Half,
     });
   }
@@ -15,7 +15,6 @@ export class OpenKitchenButton extends ScreenElement {
     this.graphics.use(sprite);
 
     this.on("pointerup", () => {
-      console.log("Go to next level");
       engine.goToScene("kitchen");
     });
   }

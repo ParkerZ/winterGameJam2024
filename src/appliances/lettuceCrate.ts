@@ -3,14 +3,16 @@ import { Resources } from "../resources";
 import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
 import { Food } from "@/foodStuffs/food";
+import { Tomato } from "@/foodStuffs/tomato";
+import { Lettuce } from "@/foodStuffs/lettuce";
 
-export class Trash extends Appliance {
+export class LettuceCrate extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
-    const sprite = Resources.Trash.toSprite();
+    const sprite = Resources.LettuceCrate.toSprite();
     sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
-      name: "Trash",
+      name: "LettuceCrate",
       sprite,
       pos,
     });
@@ -19,12 +21,18 @@ export class Trash extends Appliance {
   }
 
   public setHeldItem(incomingItem: Food): boolean {
+    const canSetHeldItem = incomingItem instanceof Lettuce;
+
+    if (!canSetHeldItem) {
+      return false;
+    }
+
     incomingItem.unparent();
-    incomingItem.kill();
-    return true;
+
+    return canSetHeldItem;
   }
 
   public getHeldItem(): Food | null {
-    return null;
+    return new Lettuce();
   }
 }

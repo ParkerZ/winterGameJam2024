@@ -4,6 +4,9 @@ import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
 import { Food } from "@/foodStuffs/food";
 import { TomatoSlice } from "@/foodStuffs/tomatoSlice";
+import { Lettuce } from "@/foodStuffs/lettuce";
+import { LettuceSlice } from "@/foodStuffs/lettuceSlice";
+import { Tomato } from "@/foodStuffs/tomato";
 
 export class Counter extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
@@ -31,7 +34,7 @@ export class Counter extends Appliance {
     this.heldItem.unparent();
     this.addChild(this.heldItem);
     this.heldItem.events.on("chopped", () => {
-      this.handleTomatoChopEvent();
+      this.handleChopEvent();
     });
     return true;
   }
@@ -47,10 +50,17 @@ export class Counter extends Appliance {
     return item;
   }
 
-  private handleTomatoChopEvent() {
-    this.heldItem.unparent();
-    this.heldItem.kill();
-    this.heldItem = new TomatoSlice();
-    this.addChild(this.heldItem);
+  private handleChopEvent() {
+    if (this.heldItem instanceof Tomato) {
+      this.heldItem.unparent();
+      this.heldItem.kill();
+      this.heldItem = new TomatoSlice();
+      this.addChild(this.heldItem);
+    } else if (this.heldItem instanceof Lettuce) {
+      this.heldItem.unparent();
+      this.heldItem.kill();
+      this.heldItem = new LettuceSlice();
+      this.addChild(this.heldItem);
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { GuestEventEmitter } from "@/events";
 import { Guest, GuestStates } from "./guest";
-import { Engine, vec } from "excalibur";
+import { Engine, Font, Label, vec } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
@@ -15,10 +15,14 @@ export class GuestSimpleWatch extends Guest {
     this.difficulty = DifficultyOptions.Easy;
     this.sprite = Resources.Guest12.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.canBeAutoFulfilled = true;
   }
 
   override attachEventEmitter(eventEmitter: GuestEventEmitter): void {
     super.attachEventEmitter(eventEmitter);
+
+    // Reset reward to baseline
+    this.reward = new Reward({ buzz: 1 });
 
     // Upgrade reward when an order is completed
     this.eventEmitter.on("clearOrder", (evt) => {
@@ -49,8 +53,12 @@ export class GuestSimpleWatch extends Guest {
 
   override onInitialize(engine: Engine<any>): void {
     super.onInitialize(engine);
+  }
 
-    // Reset reward to baseline
-    this.reward = new Reward({ buzz: 1 });
+  override getIcon(): Label | null {
+    return new Label({
+      text: `=`,
+      font: new Font({ size: 24 }),
+    });
   }
 }

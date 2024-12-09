@@ -1,11 +1,11 @@
 import { Resources } from "@/resources";
 import { Food } from "./food";
 import { Engine, vec } from "excalibur";
+import { PlayerData } from "@/playerData";
 
 export class Mince extends Food {
   private elapsedCookTime: number;
   private lastCookCheckTime: number;
-  private cookingTimeThreshold: number = 1000;
 
   constructor() {
     const sprite = Resources.Mince.toSprite();
@@ -29,7 +29,7 @@ export class Mince extends Food {
       const elapsedMs = now - this.lastCookCheckTime;
       this.elapsedCookTime += elapsedMs;
       this.lastCookCheckTime = now;
-      if (this.elapsedCookTime > this.cookingTimeThreshold) {
+      if (this.elapsedCookTime > PlayerData.cookingTimeThreshold) {
         this.events.emit("cooked");
       }
     } else {

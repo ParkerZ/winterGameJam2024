@@ -87,7 +87,11 @@ export class Glove extends ScreenElement {
       this.guestInteractionOverride = GuestInteractionOverrides.Remove;
     });
 
-    this.guestEventEmitter.on("abilityConfirm", (evt) => {
+    this.guestEventEmitter.on("autoFulfillConfirm", (evt) => {
+      this.guestInteractionOverride = GuestInteractionOverrides.None;
+    });
+
+    this.guestEventEmitter.on("removeConfirm", (evt) => {
       this.guestInteractionOverride = GuestInteractionOverrides.None;
     });
 
@@ -235,14 +239,24 @@ export class Glove extends ScreenElement {
   private interactWithIdleGuest(guest: Guest) {
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
       PlayerData.remove(guest);
-      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
+      this.guestEventEmitter.emit(
+        "removeConfirm",
+        new AbilityCompleteEvent(guest)
+      );
       return;
     }
 
-    // Can't initiate interaction if in auto fulfill mode
+    // Auto fulfill orders in this mode, no item will be held in this mode
     if (
-      this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
+      this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill &&
+      guest.canBeAutoFulfilled
     ) {
+      guest.completeOrder();
+      this.guestEventEmitter.emit(
+        "autoFulfillConfirm",
+        new AbilityCompleteEvent(guest)
+      );
+
       return;
     }
 
@@ -257,7 +271,10 @@ export class Glove extends ScreenElement {
   private interactWithOrderingGuest(guest: Guest) {
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
       PlayerData.remove(guest);
-      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
+      this.guestEventEmitter.emit(
+        "removeConfirm",
+        new AbilityCompleteEvent(guest)
+      );
       return;
     }
 
@@ -266,7 +283,10 @@ export class Glove extends ScreenElement {
       this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
     ) {
       guest.completeOrder();
-      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
+      this.guestEventEmitter.emit(
+        "autoFulfillConfirm",
+        new AbilityCompleteEvent(guest)
+      );
 
       return;
     }
@@ -287,7 +307,10 @@ export class Glove extends ScreenElement {
   private interactWithActiveGuest(guest: Guest) {
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
       PlayerData.remove(guest);
-      this.guestEventEmitter.emit("abilityConfirm", new AbilityCompleteEvent());
+      this.guestEventEmitter.emit(
+        "removeConfirm",
+        new AbilityCompleteEvent(guest)
+      );
       return;
     }
   }

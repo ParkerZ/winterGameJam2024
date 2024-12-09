@@ -5,6 +5,7 @@ import { Engine, GraphicsGroup, Vector, vec } from "excalibur";
 const burgerIngredientSpriteMap = {
   Patty: Resources.Burger,
   TomatoSlice: Resources.TomatoSlice,
+  LettuceSlice: Resources.LettuceSlice,
   Cheese: Resources.Cheese,
 };
 
@@ -33,6 +34,8 @@ export class Burger extends Food {
     ];
 
     const sortedIngredients = [];
+    if (this.ingredients.has("LettuceSlice"))
+      sortedIngredients.push("LettuceSlice");
     if (this.ingredients.has("TomatoSlice"))
       sortedIngredients.push("TomatoSlice");
     if (this.ingredients.has("Patty")) sortedIngredients.push("Patty");

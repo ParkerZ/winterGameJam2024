@@ -1,4 +1,4 @@
-import { Color, CrossFade, Engine, FadeInOut } from "excalibur";
+import { CrossFade, Engine } from "excalibur";
 import { loader } from "./resources";
 import { Kitchen } from "./scenes/kitchen";
 import { Shop } from "./scenes/shop";

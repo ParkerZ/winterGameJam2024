@@ -1,11 +1,10 @@
-import { PlayerData } from "@/playerData";
 import { Resources } from "@/resources";
 import {
   Engine,
   Font,
   Label,
   ScreenElement,
-  Text,
+  TextAlign,
   Vector,
   vec,
 } from "excalibur";
@@ -29,9 +28,9 @@ export class InviteGuestButton extends ScreenElement {
 
     this.addChild(
       new Label({
-        pos: vec(20, -20),
+        pos: vec(45, -15),
         text: `${this.price}`,
-        font: new Font({ size: 48 }),
+        font: new Font({ size: 36, textAlign: TextAlign.Right }),
         anchor: Vector.Half,
       })
     );

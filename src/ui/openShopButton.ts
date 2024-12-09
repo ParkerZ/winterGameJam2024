@@ -15,7 +15,6 @@ export class OpenShopButton extends ScreenElement {
     this.graphics.use(sprite);
 
     this.on("pointerup", () => {
-      console.log("Go to next level");
       engine.goToScene("shop");
     });
   }

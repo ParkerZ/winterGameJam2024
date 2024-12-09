@@ -13,5 +13,6 @@ export class GuestSimpleCashPlus extends Guest {
     this.difficulty = DifficultyOptions.Easy;
     this.sprite = Resources.Guest10.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.canBeAutoFulfilled = true;
   }
 }

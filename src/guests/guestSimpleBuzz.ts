@@ -13,5 +13,6 @@ export class GuestSimpleBuzz extends Guest {
     this.difficulty = DifficultyOptions.Easy;
     this.sprite = Resources.Guest1.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.canBeAutoFulfilled = true;
   }
 }

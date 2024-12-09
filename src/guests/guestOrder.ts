@@ -30,6 +30,15 @@ export class GuestOrder extends ScreenElement {
     }
 
     if (difficulty === DifficultyOptions.Medium) {
+      if (Math.random() * 2 >= 1) {
+        ingredients.add("TomatoSlice");
+      } else {
+        ingredients.add("LettuceSlice");
+      }
+    }
+
+    if (difficulty === DifficultyOptions.Hard) {
+      ingredients.add("LettuceSlice");
       ingredients.add("TomatoSlice");
     }
 

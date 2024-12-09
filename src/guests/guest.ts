@@ -1,4 +1,4 @@
-import { Engine, ScreenElement, Sprite, Vector, vec } from "excalibur";
+import { Engine, Label, ScreenElement, Sprite, Vector, vec } from "excalibur";
 import { Difficulty, DifficultyOptions, GuestOrder } from "./guestOrder";
 import { Reward } from "../reward";
 import { Burger } from "@/foodStuffs/burger";
@@ -35,6 +35,8 @@ export class Guest extends ScreenElement {
 
   protected order: GuestOrder | null;
 
+  public canBeAutoFulfilled: boolean = false;
+
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       anchor: Vector.Half,
@@ -62,11 +64,24 @@ export class Guest extends ScreenElement {
   }
 
   public onAddToScene() {
+    if (this.order) {
+      this.removeChild(this.order);
+      this.order.kill();
+      this.order = null;
+    }
     this.state = GuestStates.Idle;
   }
 
   public getState(): GuestState {
     return this.state;
+  }
+
+  public getReward(): Reward {
+    return this.reward;
+  }
+
+  public getIcon(): Label | null {
+    return null;
   }
 
   public orderOrActivate() {

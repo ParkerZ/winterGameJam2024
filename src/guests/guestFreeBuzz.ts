@@ -1,6 +1,6 @@
 import { GuestEventEmitter } from "@/events";
 import { Guest } from "./guest";
-import { vec } from "excalibur";
+import { Font, Label, vec } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
@@ -13,9 +13,17 @@ export class GuestFreeBuzz extends Guest {
     this.difficulty = DifficultyOptions.NA;
     this.sprite = Resources.Guest5.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.canBeAutoFulfilled = true;
   }
 
   override activateAbility(): void {
     this.completeOrder();
+  }
+
+  override getIcon(): Label | null {
+    return new Label({
+      text: `:)`,
+      font: new Font({ size: 24 }),
+    });
   }
 }

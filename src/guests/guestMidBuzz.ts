@@ -13,5 +13,6 @@ export class GuestMidBuzz extends Guest {
     this.difficulty = DifficultyOptions.Medium;
     this.sprite = Resources.Guest3.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.canBeAutoFulfilled = true;
   }
 }

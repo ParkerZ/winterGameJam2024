@@ -24,6 +24,10 @@ import guest10 from "./images/tempGuest10.png";
 import guest11 from "./images/tempGuest11.png";
 import guest12 from "./images/tempGuest12.png";
 import guest13 from "./images/tempGuest13.png";
+import guest14 from "./images/tempGuest14.png";
+import lettuce from "./images/tempLettuce.png";
+import lettuceCrate from "./images/tempLettuceCrate.png";
+import lettuceSlice from "./images/tempLettuceSlice.png";
 import mince from "./images/tempMince.png";
 import orderBanner from "./images/tempOrderBanner.png";
 import stove from "./images/tempStove.png";
@@ -58,6 +62,10 @@ export const Resources = {
   Guest11: new ImageSource(guest11),
   Guest12: new ImageSource(guest12),
   Guest13: new ImageSource(guest13),
+  Guest14: new ImageSource(guest14),
+  Lettuce: new ImageSource(lettuce),
+  LettuceCrate: new ImageSource(lettuceCrate),
+  LettuceSlice: new ImageSource(lettuceSlice),
   Mince: new ImageSource(mince),
   OrderBanner: new ImageSource(orderBanner),
   Stove: new ImageSource(stove),
