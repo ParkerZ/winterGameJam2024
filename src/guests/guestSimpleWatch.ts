@@ -9,9 +9,12 @@ import { GuestAutoFulfill } from "./guestAutoFulfill";
 
 export class GuestSimpleWatch extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter });
+    super({
+      eventEmitter,
+      tooltipText: "+2 Buzz per\norder served\nwhile waiting",
+    });
 
-    this.reward = new Reward({ buzz: 1 });
+    this.reward = new Reward({ buzz: 2 });
     this.difficulty = DifficultyOptions.Easy;
     this.sprite = Resources.Guest12.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
@@ -47,7 +50,7 @@ export class GuestSimpleWatch extends Guest {
         return;
       }
 
-      this.reward = new Reward({ buzz: this.reward.buzz + 1 });
+      this.reward = new Reward({ buzz: this.reward.buzz + 2 });
     });
   }
 

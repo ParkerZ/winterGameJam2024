@@ -7,7 +7,7 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestAutoFulfill extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter });
+    super({ eventEmitter, tooltipText: "Completes\nanother guest's\norder" });
 
     this.reward = new Reward({});
     this.difficulty = DifficultyOptions.NA;

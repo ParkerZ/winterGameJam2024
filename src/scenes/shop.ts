@@ -23,7 +23,15 @@ import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
 import { OpenKitchenButton } from "@/ui/openKitchenButton";
 import { StarCounter } from "@/ui/starCounter";
-import { Engine, Scene, SceneActivationContext, vec } from "excalibur";
+import {
+  Engine,
+  Font,
+  Label,
+  Scene,
+  SceneActivationContext,
+  Vector,
+  vec,
+} from "excalibur";
 
 export class Shop extends Scene {
   override onInitialize(engine: Engine): void {}
@@ -87,37 +95,37 @@ export class Shop extends Scene {
 
     const invite8 = new GuestInviteCard({
       pos: vec(210, 300),
-      GuestType: GuestAutoFulfill,
+      GuestType: GuestHardBuzz,
       buzzCost: 6,
       max: 2,
     });
 
     const invite9 = new GuestInviteCard({
-      pos: vec(335, 300),
-      GuestType: GuestHardBuzz,
-      buzzCost: 5,
-      max: 2,
-    });
-
-    const invite10 = new GuestInviteCard({
-      pos: vec(460, 300),
+      pos: vec(336, 300),
       GuestType: GuestHardBuzzCash,
       buzzCost: 6,
       max: 2,
     });
 
-    const invite11 = new GuestInviteCard({
-      pos: vec(585, 300),
-      GuestType: GuestRemove,
+    const invite10 = new GuestInviteCard({
+      pos: vec(460, 300),
+      GuestType: GuestAutoFulfill,
       buzzCost: 7,
       max: 2,
     });
 
+    const invite11 = new GuestInviteCard({
+      pos: vec(585, 300),
+      GuestType: GuestSimpleCashPlus,
+      buzzCost: 7,
+      max: 3,
+    });
+
     const invite12 = new GuestInviteCard({
       pos: vec(710, 300),
-      GuestType: GuestSimpleCashPlus,
+      GuestType: GuestRemove,
       buzzCost: 8,
-      max: 3,
+      max: 2,
     });
 
     const invite13 = new GuestInviteCard({
@@ -157,6 +165,12 @@ export class Shop extends Scene {
       cashCost: PlayerData.choppingLevel + 2,
     });
 
+    const deckSizeLabel = new Label({
+      pos: vec(665, 390),
+      anchor: Vector.Half,
+      text: `Total: ${PlayerData.deck.length}`,
+      font: new Font({ size: 24 }),
+    });
     const button = new OpenKitchenButton();
 
     this.add(buzzCounter);
@@ -183,6 +197,7 @@ export class Shop extends Scene {
     this.add(upgrade1);
     this.add(upgrade2);
 
+    this.add(deckSizeLabel);
     this.add(button);
   }
 

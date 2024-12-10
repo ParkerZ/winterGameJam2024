@@ -1,3 +1,4 @@
+import { Engine } from "excalibur";
 import { Guest } from "./guests/guest";
 import { GuestMidBuzz } from "./guests/guestMidBuzz";
 import { GuestSimpleBuzz } from "./guests/guestSimpleBuzz";
@@ -23,10 +24,10 @@ export class PlayerData {
     new GuestMidBuzz({}),
   ];
 
-  public static remove(guest: Guest) {
+  public static remove(guest: Guest, engine: Engine<any>) {
     const guestIndex = PlayerData.deck.indexOf(guest);
     const guestToRemove = PlayerData.deck[guestIndex];
-    guestToRemove.remove();
+    guestToRemove.remove(engine);
     PlayerData.deck.splice(guestIndex, 1);
   }
 

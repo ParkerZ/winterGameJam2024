@@ -76,7 +76,7 @@ export class Glove extends ScreenElement {
     });
 
     this.guestEventEmitter.on("interact", (evt) => {
-      this.interactWithGuest(evt.guest);
+      this.interactWithGuest(evt.guest, engine);
     });
 
     this.guestEventEmitter.on("autoFulfillActivate", (evt) => {
@@ -220,25 +220,25 @@ export class Glove extends ScreenElement {
 
   private onInteractWithApplianceStop(appliance: Appliance) {}
 
-  private interactWithGuest(guest: Guest) {
+  private interactWithGuest(guest: Guest, engine: Engine<any>) {
     const guestState = guest.getState();
 
     switch (guestState) {
       case GuestStates.Idle:
-        this.interactWithIdleGuest(guest);
+        this.interactWithIdleGuest(guest, engine);
         break;
       case GuestStates.Ordering:
-        this.interactWithOrderingGuest(guest);
+        this.interactWithOrderingGuest(guest, engine);
         break;
       case GuestStates.Activating:
-        this.interactWithActiveGuest(guest);
+        this.interactWithActiveGuest(guest, engine);
         break;
     }
   }
 
-  private interactWithIdleGuest(guest: Guest) {
+  private interactWithIdleGuest(guest: Guest, engine: Engine<any>) {
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
-      PlayerData.remove(guest);
+      PlayerData.remove(guest, engine);
       this.guestEventEmitter.emit(
         "removeConfirm",
         new AbilityCompleteEvent(guest)
@@ -268,9 +268,9 @@ export class Glove extends ScreenElement {
     guest.orderOrActivate();
   }
 
-  private interactWithOrderingGuest(guest: Guest) {
+  private interactWithOrderingGuest(guest: Guest, engine: Engine<any>) {
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
-      PlayerData.remove(guest);
+      PlayerData.remove(guest, engine);
       this.guestEventEmitter.emit(
         "removeConfirm",
         new AbilityCompleteEvent(guest)
@@ -304,9 +304,9 @@ export class Glove extends ScreenElement {
     }
   }
 
-  private interactWithActiveGuest(guest: Guest) {
+  private interactWithActiveGuest(guest: Guest, engine: Engine<any>) {
     if (this.guestInteractionOverride === GuestInteractionOverrides.Remove) {
-      PlayerData.remove(guest);
+      PlayerData.remove(guest, engine);
       this.guestEventEmitter.emit(
         "removeConfirm",
         new AbilityCompleteEvent(guest)

@@ -7,7 +7,7 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestSimpleCash extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter });
+    super({ eventEmitter, tooltipText: "+1 $" });
 
     this.reward = new Reward({ cash: 1 });
     this.difficulty = DifficultyOptions.Easy;

@@ -7,7 +7,7 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestFreeBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter });
+    super({ eventEmitter, tooltipText: "+1 Buzz" });
 
     this.reward = new Reward({ buzz: 1 });
     this.difficulty = DifficultyOptions.NA;

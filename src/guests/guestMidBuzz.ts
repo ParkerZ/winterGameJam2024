@@ -7,9 +7,9 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestMidBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter });
+    super({ eventEmitter, tooltipText: "+3 Buzz" });
 
-    this.reward = new Reward({ buzz: 2 });
+    this.reward = new Reward({ buzz: 3 });
     this.difficulty = DifficultyOptions.Medium;
     this.sprite = Resources.Guest3.toSprite();
     this.sprite.scale = vec(0.5, 0.5);

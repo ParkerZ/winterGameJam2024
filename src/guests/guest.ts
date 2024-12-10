@@ -8,6 +8,7 @@ import {
   GuestInteractEvent,
 } from "@/events";
 import { PlayerData } from "@/playerData";
+import { Tooltip } from "@/ui/tooltip";
 
 export type GuestState =
   | "dormant"
@@ -32,18 +33,30 @@ export class Guest extends ScreenElement {
   protected difficulty: Difficulty;
   protected sprite: Sprite;
   protected state: GuestState;
+  protected hoverState: "idle" | "hovered" | "end-hover" = "idle";
 
   protected order: GuestOrder | null;
 
+  protected tooltip: Tooltip | null;
+  protected isTooltipActive: boolean = false;
+
   public canBeAutoFulfilled: boolean = false;
 
-  constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
+  constructor({
+    eventEmitter,
+    tooltipText = "",
+  }: {
+    eventEmitter?: GuestEventEmitter;
+    tooltipText?: string;
+  }) {
     super({
       anchor: Vector.Half,
     });
 
     this.eventEmitter = eventEmitter;
     this.state = GuestStates.Dormant;
+
+    this.tooltip = tooltipText ? new Tooltip({ text: tooltipText }) : null;
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -57,6 +70,42 @@ export class Guest extends ScreenElement {
         this.eventEmitter.emit("interact", new GuestInteractEvent(this));
       }
     });
+
+    this.on("pointerenter", () => {
+      this.hoverState = "hovered";
+    });
+
+    this.on("pointerleave", () => {
+      this.hoverState = "end-hover";
+    });
+  }
+
+  onPreUpdate(engine: Engine<any>, elapsedMs: number): void {
+    if (
+      this.hoverState === "hovered" &&
+      this.tooltip &&
+      !this.isTooltipActive
+    ) {
+      engine.add(this.tooltip);
+      this.isTooltipActive = true;
+    } else if (
+      this.hoverState === "end-hover" &&
+      !this.graphics.bounds.contains(engine.input.pointers.primary.lastWorldPos)
+    ) {
+      this.hoverState = "idle";
+      if (this.tooltip && this.isTooltipActive) {
+        engine.remove(this.tooltip);
+        this.isTooltipActive = false;
+      }
+    }
+  }
+
+  onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
+    if (this.state === GuestStates.Cleanup) {
+      this.cleanup(engine);
+      this.state = GuestStates.Dormant;
+      this.kill();
+    }
   }
 
   public attachEventEmitter(eventEmitter: GuestEventEmitter) {
@@ -70,6 +119,7 @@ export class Guest extends ScreenElement {
       this.order = null;
     }
     this.state = GuestStates.Idle;
+    this.hoverState = "idle";
   }
 
   public getState(): GuestState {
@@ -106,9 +156,6 @@ export class Guest extends ScreenElement {
     return this.order && this.order.doesBurgerMatchOrder(burger);
   }
 
-  // Use this for any effects when guest has no associated order
-  protected activateAbility() {}
-
   public completeOrder() {
     this.eventEmitter.emit("clearOrder", new ClearOrderEvent(this));
     this.reward.distribute();
@@ -117,13 +164,11 @@ export class Guest extends ScreenElement {
       this.order.kill();
       this.order = null;
     }
+
     this.state = GuestStates.Cleanup;
   }
 
-  // Use this for any effects after order completion
-  protected cleanup() {}
-
-  public remove() {
+  public remove(engine: Engine<any>) {
     if (this.order) {
       this.removeChild(this.order);
       this.order.kill();
@@ -132,11 +177,14 @@ export class Guest extends ScreenElement {
     this.state = GuestStates.Cleanup;
   }
 
-  onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
-    if (this.state === GuestStates.Cleanup) {
-      this.cleanup();
-      this.state = GuestStates.Dormant;
-      this.kill();
+  // Use this for any effects when guest has no associated order
+  protected activateAbility() {}
+
+  // Use this for any effects after order completion
+  protected cleanup(engine: Engine<any>) {
+    if (this.tooltip && this.isTooltipActive) {
+      engine.remove(this.tooltip);
+      this.isTooltipActive = false;
     }
   }
 }

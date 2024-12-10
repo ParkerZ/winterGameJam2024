@@ -10,11 +10,16 @@ import {
 import { PlayerData } from "@/playerData";
 import { Resources } from "@/resources";
 import { UpgradeSkillButton } from "@/ui/UpgradeSkillButton";
+import { Tooltip } from "@/ui/tooltip";
 
 export class KnifeUpgradeCard extends ScreenElement {
   protected cashCost: number;
   protected max: number;
   protected sprite: Sprite;
+  protected hoverState: "idle" | "hovered" | "end-hover" = "idle";
+
+  protected tooltip: Tooltip;
+  protected isTooltipActive: boolean = false;
 
   constructor({
     pos,
@@ -31,6 +36,7 @@ export class KnifeUpgradeCard extends ScreenElement {
     this.max = max;
     this.sprite = Resources.Counter.toSprite();
     this.sprite.scale = vec(0.5, 0.5);
+    this.tooltip = new Tooltip({ text: "Knife chops\nfaster" });
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -65,8 +71,30 @@ export class KnifeUpgradeCard extends ScreenElement {
         }
       });
     }
+    this.on("pointerenter", () => {
+      this.hoverState = "hovered";
+    });
+
+    this.on("pointerleave", () => {
+      this.hoverState = "end-hover";
+    });
   }
 
+  onPreUpdate(engine: Engine<any>, elapsedMs: number): void {
+    if (this.hoverState === "hovered" && !this.isTooltipActive) {
+      engine.add(this.tooltip);
+      this.isTooltipActive = true;
+    } else if (
+      this.hoverState === "end-hover" &&
+      !this.graphics.bounds.contains(engine.input.pointers.primary.lastWorldPos)
+    ) {
+      this.hoverState = "idle";
+      if (this.isTooltipActive) {
+        engine.remove(this.tooltip);
+        this.isTooltipActive = false;
+      }
+    }
+  }
   private getCountText(): string {
     return `${PlayerData.choppingLevel}/${this.max}`;
   }

@@ -7,7 +7,7 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestRemove extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter });
+    super({ eventEmitter, tooltipText: "Removes any\nguest" });
 
     this.reward = new Reward({});
     this.difficulty = DifficultyOptions.NA;

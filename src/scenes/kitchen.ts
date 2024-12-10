@@ -18,6 +18,9 @@ import { DayCounter } from "@/ui/dayCounter";
 import { LettuceCrate } from "@/appliances/lettuceCrate";
 import { TimeCounter } from "@/ui/timeCounter";
 import { StarCounter } from "@/ui/starCounter";
+import { GuestHardStarOne } from "@/guests/guestHardStarOne";
+import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
+import { GuestHardStarThree } from "@/guests/guestHardStarThree";
 
 const GUEST_SPAWN_TIME_MS = 1000;
 
@@ -31,7 +34,6 @@ export class Kitchen extends Scene {
   protected guestCount: number;
   protected allGuests: Array<Guest> = [];
   protected queuedGuests: Array<Guest> = [];
-  // protected lastGuestTime: number = 0;
   protected numGuestsServed = 0;
   protected startTime = 0;
   protected maxTimeMS = 30999;
@@ -68,7 +70,6 @@ export class Kitchen extends Scene {
     PlayerData.day += 1;
     this.guestCount = PlayerData.deck.length;
     this.numGuestsServed = 0;
-    // this.lastGuestTime = 0;
     this.isDayActive = true;
     this.startTime = Date.now();
     const now = Date.now();
@@ -84,9 +85,32 @@ export class Kitchen extends Scene {
 
     // Create array of orders
     this.allGuests = shuffleArray(PlayerData.deck.slice());
+
+    const firstStarIndex = this.allGuests.findIndex(
+      (g) => g instanceof GuestHardStarOne
+    );
+    const secondStarIndex = this.allGuests.findIndex(
+      (g) => g instanceof GuestHardStarTwo
+    );
+    const thirdStarIndex = this.allGuests.findIndex(
+      (g) => g instanceof GuestHardStarThree
+    );
+
+    // Put star guests somewhere in the first 5
+    if (firstStarIndex) {
+      const guest = this.allGuests.splice(firstStarIndex, 1)[0];
+      this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
+    } else if (secondStarIndex) {
+      const guest = this.allGuests.splice(secondStarIndex, 1)[0];
+      this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
+    } else if (thirdStarIndex) {
+      const guest = this.allGuests.splice(thirdStarIndex, 1)[0];
+      this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
+    }
+
     this.allGuests.forEach((g) => g.attachEventEmitter(guestEventEmitter));
 
-    // Take 3 to seed level
+    // Take 3 guests to seed level
     this.queuedGuests = [...Array(3)].map((_e, i) => {
       const guest = this.allGuests.pop();
       return guest;
@@ -102,15 +126,15 @@ export class Kitchen extends Scene {
     );
 
     const fridge = new Fridge(applianceEventEmitter, vec(100, 250));
-    const counter1 = new Counter(applianceEventEmitter, vec(250, 250));
-    const counter2 = new Counter(applianceEventEmitter, vec(400, 250));
-    const counter3 = new Counter(applianceEventEmitter, vec(550, 250));
-    const stove = new Stove(applianceEventEmitter, vec(700, 250));
-    const bunCrate = new BunCrate(applianceEventEmitter, vec(100, 500));
-    const tomatoCrate = new TomatoCrate(applianceEventEmitter, vec(250, 500));
-    const lettuceCrate = new LettuceCrate(applianceEventEmitter, vec(400, 500));
-    const cheeseCrate = new CheeseCrate(applianceEventEmitter, vec(550, 500));
-    const trash = new Trash(applianceEventEmitter, vec(700, 500));
+    const stove = new Stove(applianceEventEmitter, vec(250, 250));
+    const counter1 = new Counter(applianceEventEmitter, vec(400, 250));
+    const counter2 = new Counter(applianceEventEmitter, vec(550, 250));
+    const counter3 = new Counter(applianceEventEmitter, vec(700, 250));
+    const trash = new Trash(applianceEventEmitter, vec(100, 500));
+    const bunCrate = new BunCrate(applianceEventEmitter, vec(250, 500));
+    const cheeseCrate = new CheeseCrate(applianceEventEmitter, vec(400, 500));
+    const tomatoCrate = new TomatoCrate(applianceEventEmitter, vec(550, 500));
+    const lettuceCrate = new LettuceCrate(applianceEventEmitter, vec(700, 500));
     this.glove = new Glove(applianceEventEmitter, guestEventEmitter);
 
     this.add(buzzCounter);
@@ -167,17 +191,6 @@ export class Kitchen extends Scene {
       return;
     }
 
-    // Object.keys(this.guestSlotLastTime).forEach((slotKey) => {
-    //   if (!this.guestSlotLastTime[slotKey]) {
-    //     this.guestSlotLastTime[slotKey] = now;
-    //   }
-    // });
-
-    // if (!this.lastGuestTime) {
-    //   this.lastGuestTime = now;
-    //   return;
-    // }
-
     // Find oldest available free slot
     const ageOrderedReadySlotKeys = Object.keys(this.guestSlot)
       .filter(
@@ -197,14 +210,6 @@ export class Kitchen extends Scene {
 
     const targetSlot = this.guestSlot[slotKey];
 
-    console.log(
-      "SPAWNING GUEST",
-      targetSlot,
-      PlayerData.deck,
-      this.allGuests,
-      this.queuedGuests
-    );
-
     let guest = this.dequeueGuest();
 
     // Put guest in appropriate slot
@@ -217,36 +222,10 @@ export class Kitchen extends Scene {
       guest.onAddToScene();
       this.add(guest);
     }
-    // }
-
-    // if (now - this.lastGuestTime >= GUEST_SPAWN_TIME_MS) {
-    //   console.log(
-    //     "SPAWNING GUEST",
-    //     PlayerData.deck,
-    //     this.allGuests,
-    //     this.queuedGuests
-    //   );
-    //   this.lastGuestTime = 0;
-
-    //   let guest = this.dequeueGuest();
-
-    //   if (guest) {
-    //     guest.onAddToScene();
-    //     this.add(guest);
-    //   }
-    // }
   }
 
   private enqueueNextGuest(servedGuest: Guest) {
     this.numGuestsServed++;
-    console.log(
-      "Guets served",
-      servedGuest,
-      this.numGuestsServed,
-      this.guestCount,
-      PlayerData.deck
-    );
-    // TODO: this might still be wrong
     if (this.numGuestsServed === this.guestCount) {
       this.endDay();
       return;
@@ -265,7 +244,6 @@ export class Kitchen extends Scene {
     this.guestSlot[targetSlotKey].guest = null;
 
     const guestToQueue = this.allGuests.pop();
-    // guestToQueue.pos = evt.guest.globalPos;
     this.queuedGuests.push(guestToQueue);
   }
 
