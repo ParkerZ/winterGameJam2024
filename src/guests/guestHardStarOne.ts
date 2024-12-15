@@ -1,6 +1,6 @@
 import { GuestEventEmitter } from "@/events";
 import { Guest } from "./guest";
-import { Engine, vec } from "excalibur";
+import { Engine } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
@@ -11,12 +11,11 @@ export class GuestHardStarOne extends Guest {
     super({
       eventEmitter,
       tooltipText: "Gives 1st star\nthen removes\nfrom deck",
+      sprite: Resources.Guest13.toSprite(),
     });
 
     this.reward = new Reward({ star: 1 });
     this.difficulty = DifficultyOptions.Hard;
-    this.sprite = Resources.Guest13.toSprite();
-    this.sprite.scale = vec(0.5, 0.5);
     this.canBeAutoFulfilled = true;
   }
 

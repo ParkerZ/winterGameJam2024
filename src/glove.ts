@@ -13,7 +13,6 @@ import { Bun } from "./foodStuffs/bun";
 import { BunCrate } from "./appliances/bunCrate";
 import { TomatoCrate } from "./appliances/tomatoCrate";
 import { CheeseCrate } from "./appliances/cheeseCrate";
-import { GuestOrder } from "./guests/guestOrder";
 import { Guest, GuestStates } from "./guests/guest";
 import { PlayerData } from "./playerData";
 
@@ -34,6 +33,8 @@ export class Glove extends ScreenElement {
   protected guestEventEmitter: GuestEventEmitter;
   protected guestInteractionOverride: GuestInteractionOverride;
 
+  protected activeAppliances: Array<Appliance> = [];
+
   constructor(
     applianceEventEmitter: ApplianceEventEmitter,
     guestEventEmitter: GuestEventEmitter
@@ -53,25 +54,66 @@ export class Glove extends ScreenElement {
   }
 
   onInitialize(engine: Engine<any>): void {
+    this.activeAppliances = [];
     const sprite = Resources.Glove.toSprite();
     sprite.scale = vec(0.5, 0.5);
     this.graphics.use(sprite);
 
     this.applianceEventEmitter.on("exchange", (evt) => {
       if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
-        this.onExchangeWithAppliance(evt.appliance);
+        if (
+          this.activeAppliances.length &&
+          this.activeAppliances[0] === evt.appliance
+        ) {
+          this.onExchangeWithAppliance(evt.appliance);
+        }
       }
     });
 
     this.applianceEventEmitter.on("interactStart", (evt) => {
       if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
-        this.onInteractWithApplianceStart(evt.appliance);
+        if (
+          this.activeAppliances.length &&
+          this.activeAppliances[0] === evt.appliance
+        ) {
+          this.onInteractWithApplianceStart(evt.appliance);
+        }
       }
     });
 
     this.applianceEventEmitter.on("InteractStop", (evt) => {
       if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
         this.onInteractWithApplianceStop(evt.appliance);
+      }
+    });
+
+    this.applianceEventEmitter.on("hoverStart", (evt) => {
+      if (
+        this.guestInteractionOverride === GuestInteractionOverrides.None &&
+        !this.activeAppliances.includes(evt.appliance)
+      ) {
+        // Add hovered to font of list and mark all other hovered appliances as inactive
+        this.activeAppliances.forEach((app) => app.setActive(false, engine));
+        evt.appliance.setActive(true, engine);
+        this.activeAppliances.unshift(evt.appliance);
+      }
+    });
+
+    this.applianceEventEmitter.on("hoverEnd", (evt) => {
+      if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
+        // Set unhovered to inactive, remove from list, and set first remaining to active
+        const index = this.activeAppliances.findIndex(
+          (appliance) => appliance === evt.appliance
+        );
+
+        if (index > -1) {
+          this.activeAppliances[index].setActive(false, engine);
+          this.activeAppliances.splice(index, 1);
+        }
+
+        if (this.activeAppliances.length) {
+          this.activeAppliances[0].setActive(true, engine);
+        }
       }
     });
 

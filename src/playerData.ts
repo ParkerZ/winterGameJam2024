@@ -36,26 +36,12 @@ export class PlayerData {
   }
 
   public static upgradeCookingTimeThreshold() {
-    if (PlayerData.cookingTimeThreshold > 1000) {
-      PlayerData.cookingTimeThreshold -= 750;
-    } else {
-      PlayerData.cookingTimeThreshold = Math.ceil(
-        PlayerData.cookingTimeThreshold / 2
-      );
-    }
-
+    PlayerData.cookingTimeThreshold -= 500;
     PlayerData.cookingLevel += 1;
   }
 
   public static upgradeChoppingTimeThreshold() {
-    if (PlayerData.choppingTimeThreshold > 750) {
-      PlayerData.choppingTimeThreshold -= 750;
-    } else {
-      PlayerData.choppingTimeThreshold = Math.ceil(
-        PlayerData.choppingTimeThreshold / 2
-      );
-    }
-
+    PlayerData.choppingTimeThreshold -= 400;
     PlayerData.choppingLevel += 1;
   }
 }

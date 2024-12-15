@@ -9,7 +9,6 @@ import { Lettuce } from "@/foodStuffs/lettuce";
 export class LettuceCrate extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
     const sprite = Resources.LettuceCrate.toSprite();
-    sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "LettuceCrate",

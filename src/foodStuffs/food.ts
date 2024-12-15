@@ -10,8 +10,16 @@ export class Food extends ScreenElement {
   public isBurgerBase = false;
   public allowsInteraction: boolean = false;
 
-  constructor({ name, sprite }: { name: string; sprite: Sprite }) {
-    super({ name, anchor: Vector.Half });
+  constructor({
+    name,
+    sprite,
+    anchor = Vector.Half,
+  }: {
+    name: string;
+    sprite: Sprite;
+    anchor?: Vector;
+  }) {
+    super({ name, anchor });
 
     this.sprite = sprite;
     this.state = "idle";

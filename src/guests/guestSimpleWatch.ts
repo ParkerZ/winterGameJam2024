@@ -1,6 +1,6 @@
 import { GuestEventEmitter } from "@/events";
 import { Guest, GuestStates } from "./guest";
-import { Engine, Font, Label, vec } from "excalibur";
+import { Engine, Font, Label } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
@@ -12,12 +12,11 @@ export class GuestSimpleWatch extends Guest {
     super({
       eventEmitter,
       tooltipText: "+2 Buzz per\norder served\nwhile waiting",
+      sprite: Resources.Guest6.toSprite(),
     });
 
     this.reward = new Reward({ buzz: 2 });
     this.difficulty = DifficultyOptions.Easy;
-    this.sprite = Resources.Guest12.toSprite();
-    this.sprite.scale = vec(0.5, 0.5);
     this.canBeAutoFulfilled = true;
   }
 

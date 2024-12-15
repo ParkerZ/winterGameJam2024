@@ -1,5 +1,5 @@
-import { Vector, vec } from "excalibur";
-import { Resources } from "../resources";
+import { Engine, Vector, vec } from "excalibur";
+import { Resources, spriteScale } from "../resources";
 import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
 import { Mince } from "@/foodStuffs/mince";
@@ -9,7 +9,6 @@ import { Patty } from "@/foodStuffs/patty";
 export class Stove extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
     const sprite = Resources.Stove.toSprite();
-    sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "Stove",

@@ -7,12 +7,14 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestSimpleBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter, tooltipText: "+1 Buzz" });
+    super({
+      eventEmitter,
+      tooltipText: "+1 Buzz",
+      sprite: Resources.Guest1.toSprite(),
+    });
 
     this.reward = new Reward({ buzz: 1 });
     this.difficulty = DifficultyOptions.Easy;
-    this.sprite = Resources.Guest1.toSprite();
-    this.sprite.scale = vec(0.5, 0.5);
     this.canBeAutoFulfilled = true;
   }
 }

@@ -22,6 +22,8 @@ export type ApplianceEvents = {
   interact: InteractEvent;
   interactStart: InteractEvent;
   InteractStop: InteractEvent;
+  hoverStart: InteractEvent;
+  hoverEnd: InteractEvent;
 };
 
 export class ApplianceEventEmitter extends EventEmitter<

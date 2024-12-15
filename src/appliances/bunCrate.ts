@@ -8,7 +8,6 @@ import { Bun } from "@/foodStuffs/bun";
 export class BunCrate extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
     const sprite = Resources.BunCrate.toSprite();
-    sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "BunCrate",

@@ -7,12 +7,14 @@ import { DifficultyOptions } from "./guestOrder";
 
 export class GuestAutoFulfill extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter, tooltipText: "Completes\nanother guest's\norder" });
+    super({
+      eventEmitter,
+      tooltipText: "Completes\nanother guest's\norder",
+      sprite: Resources.Guest10.toSprite(),
+    });
 
     this.reward = new Reward({});
     this.difficulty = DifficultyOptions.NA;
-    this.sprite = Resources.Guest6.toSprite();
-    this.sprite.scale = vec(0.5, 0.5);
   }
 
   // TODO: add cancel option

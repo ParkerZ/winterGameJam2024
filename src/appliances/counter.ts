@@ -1,5 +1,5 @@
-import { Vector, vec } from "excalibur";
-import { Resources } from "../resources";
+import { Sprite, Vector, vec } from "excalibur";
+import { Resources, spriteScale } from "../resources";
 import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
 import { Food } from "@/foodStuffs/food";
@@ -9,9 +9,11 @@ import { LettuceSlice } from "@/foodStuffs/lettuceSlice";
 import { Tomato } from "@/foodStuffs/tomato";
 
 export class Counter extends Appliance {
-  constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
-    const sprite = Resources.Counter.toSprite();
-    sprite.scale = vec(0.5, 0.5);
+  constructor(
+    applianceEventEmitter: ApplianceEventEmitter,
+    pos: Vector,
+    sprite: Sprite
+  ) {
     super({
       eventEmitter: applianceEventEmitter,
       name: "Counter",

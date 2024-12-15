@@ -9,7 +9,6 @@ import { GuestHardStarThree } from "@/guests/guestHardStarThree";
 import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
 import { GuestInviteCard } from "@/guests/guestInviteCard";
 import { GuestMidBuzz } from "@/guests/guestMidBuzz";
-import { GuestMidCash } from "@/guests/guestMidCash";
 import { GuestMidCashForBuzz } from "@/guests/guestMidCashForBuzz";
 import { GuestMidUpgrade } from "@/guests/guestMidUpgrade";
 import { GuestRemove } from "@/guests/guestRemove";
@@ -18,6 +17,7 @@ import { GuestSimpleCash } from "@/guests/guestSimpleCash";
 import { GuestSimpleCashPlus } from "@/guests/guestSimpleCashPlus";
 import { GuestSimpleWatch } from "@/guests/guestSimpleWatch";
 import { PlayerData } from "@/playerData";
+import { Resources, spriteScale } from "@/resources";
 import { BuzzCounter } from "@/ui/buzzCounter";
 import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
@@ -29,6 +29,7 @@ import {
   Label,
   Scene,
   SceneActivationContext,
+  ScreenElement,
   Vector,
   vec,
 } from "excalibur";
@@ -41,27 +42,32 @@ export class Shop extends Scene {
       alert("Game over");
     }
 
-    const buzzCounter = new BuzzCounter(vec(25, 5));
-    const cashCounter = new CashCounter(vec(25, 35));
-    const dayCounter = new DayCounter(vec(25, 65));
-    const starCounter = new StarCounter(vec(25, 95));
+    const shopBackground = new ScreenElement({ z: -2 });
+    const bgSprite = Resources.FloorBg.toSprite();
+    bgSprite.scale = spriteScale;
+    shopBackground.graphics.use(bgSprite);
+    this.add(shopBackground);
+
+    const buzzCounter = new BuzzCounter(vec(885, 5));
+    const cashCounter = new CashCounter(vec(885, 35));
+    const dayCounter = new DayCounter(vec(885, 65));
+    const starCounter = new StarCounter(vec(885, 95));
 
     const invite1 = new GuestInviteCard({
       pos: vec(85, 150),
-      GuestType: GuestSimpleCash,
+      GuestType: GuestSimpleBuzz,
       buzzCost: 1,
     });
 
     const invite2 = new GuestInviteCard({
       pos: vec(210, 150),
-      GuestType: GuestMidBuzz,
-      buzzCost: 2,
-      max: 3,
+      GuestType: GuestSimpleCash,
+      buzzCost: 1,
     });
 
     const invite3 = new GuestInviteCard({
       pos: vec(335, 150),
-      GuestType: GuestMidCash,
+      GuestType: GuestMidBuzz,
       buzzCost: 2,
       max: 3,
     });

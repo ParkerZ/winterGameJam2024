@@ -1,18 +1,20 @@
 import { AbilityActivateEvent, GuestEventEmitter } from "@/events";
 import { Guest, GuestStates } from "./guest";
-import { Font, Label, vec } from "excalibur";
+import { Font, Label } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
 
 export class GuestRemove extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
-    super({ eventEmitter, tooltipText: "Removes any\nguest" });
+    super({
+      eventEmitter,
+      tooltipText: "Removes any\nguest",
+      sprite: Resources.Guest12.toSprite(),
+    });
 
     this.reward = new Reward({});
     this.difficulty = DifficultyOptions.NA;
-    this.sprite = Resources.Guest7.toSprite();
-    this.sprite.scale = vec(0.5, 0.5);
   }
 
   override activateAbility(): void {

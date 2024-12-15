@@ -9,6 +9,20 @@ const burgerIngredientSpriteMap = {
   Cheese: Resources.Cheese,
 };
 
+const burgerIngredientHeightMap = {
+  Patty: 12,
+  Cheese: 8,
+  LettuceSlice: 4,
+  TomatoSlice: 6,
+};
+
+const burgerIngredientXOffsetMap = {
+  Patty: 1,
+  Cheese: -3,
+  LettuceSlice: -1,
+  TomatoSlice: 2,
+};
+
 export class Burger extends Food {
   protected ingredients: Set<string>;
 
@@ -18,6 +32,7 @@ export class Burger extends Food {
     super({
       name: "Burger",
       sprite,
+      anchor: Vector.Half,
     });
 
     this.ingredients = new Set(ingredients);
@@ -34,6 +49,7 @@ export class Burger extends Food {
     ];
 
     const sortedIngredients = [];
+    let runningHeight = 0;
     if (this.ingredients.has("LettuceSlice"))
       sortedIngredients.push("LettuceSlice");
     if (this.ingredients.has("TomatoSlice"))
@@ -44,17 +60,34 @@ export class Burger extends Food {
     sortedIngredients.forEach((ingredient, i) => {
       const newSprite = burgerIngredientSpriteMap[ingredient].toSprite();
       newSprite.scale = vec(0.5, 0.5);
-      members.push({ graphic: newSprite, offset: vec(0, -20 * (i + 1)) });
+      runningHeight += burgerIngredientHeightMap[ingredient];
+      members.push({
+        graphic: newSprite,
+        offset: vec(burgerIngredientXOffsetMap[ingredient], -1 * runningHeight),
+      });
     });
 
+    runningHeight += 16;
     const newSprite = Resources.BunTop.toSprite();
     newSprite.scale = vec(0.5, 0.5);
-    members.push({ graphic: newSprite, offset: vec(0, -20 * members.length) });
+    members.push({
+      graphic: newSprite,
+      offset: vec(1, -1 * runningHeight),
+    });
+
+    // Align all members
+    members.forEach((member) => (member.offset.y += runningHeight / 2));
+
+    // TODO: Go through all graphics members and add 1/2 running height?
     this.graphics.use(new GraphicsGroup({ members }));
   }
 
   onInitialize(engine: Engine<any>): void {
     super.onInitialize(engine);
+
+    const sp = Resources.Burger.toSprite();
+    sp.scale = Vector.Half;
+    this.graphics.use(sp);
 
     this.updateGraphics();
   }

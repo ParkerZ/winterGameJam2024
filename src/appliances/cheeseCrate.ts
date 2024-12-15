@@ -8,7 +8,6 @@ import { Cheese } from "@/foodStuffs/cheese";
 export class CheeseCrate extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
     const sprite = Resources.CheeseCrate.toSprite();
-    sprite.scale = vec(0.5, 0.5);
     super({
       eventEmitter: applianceEventEmitter,
       name: "CheeseCrate",

@@ -17,7 +17,7 @@ export class CashCounter extends ScreenElement {
   private updateGraphics() {
     this.text = new Text({
       text: `Cash: ${this.count}`,
-      font: new Font({ size: 30 }),
+      font: new Font({ size: 24 }),
     });
 
     this.graphics.use(this.text);

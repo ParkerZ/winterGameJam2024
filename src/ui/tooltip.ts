@@ -15,7 +15,7 @@ export class Tooltip extends ScreenElement {
 
   constructor({ text }: { text: string }) {
     super({
-      pos: vec(710, 525),
+      pos: vec(950, 525),
     });
 
     this.text = text;

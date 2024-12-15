@@ -8,7 +8,7 @@ import {
   vec,
 } from "excalibur";
 import { PlayerData } from "@/playerData";
-import { Resources } from "@/resources";
+import { Resources, spriteScale } from "@/resources";
 import { UpgradeSkillButton } from "@/ui/UpgradeSkillButton";
 import { Tooltip } from "@/ui/tooltip";
 
@@ -34,8 +34,8 @@ export class StoveUpgradeCard extends ScreenElement {
 
     this.cashCost = cashCost;
     this.max = max;
-    this.sprite = Resources.Stove.toSprite();
-    this.sprite.scale = vec(0.5, 0.5);
+    this.sprite = Resources.StoveUpgrade.toSprite();
+    this.sprite.scale = spriteScale;
     this.tooltip = new Tooltip({ text: "Stove cooks\nfaster" });
   }
 

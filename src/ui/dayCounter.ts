@@ -17,7 +17,7 @@ export class DayCounter extends ScreenElement {
   private updateGraphics() {
     this.text = new Text({
       text: `Day: ${this.count}/${PlayerData.maxDay}`,
-      font: new Font({ size: 30 }),
+      font: new Font({ size: 25 }),
     });
 
     this.graphics.use(this.text);

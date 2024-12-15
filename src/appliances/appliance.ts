@@ -1,5 +1,6 @@
 import { ApplianceEventEmitter, ExchangeEvent, InteractEvent } from "@/events";
 import { Food } from "@/foodStuffs/food";
+import { spriteScale } from "@/resources";
 import {
   Actor,
   Buttons,
@@ -13,7 +14,7 @@ import {
 } from "excalibur";
 
 export abstract class Appliance extends ScreenElement {
-  private sprite: Sprite;
+  protected sprite: Sprite;
 
   protected tempHighlight: Actor;
   protected state: "idle" | "hovered" | "end-hover";
@@ -41,6 +42,7 @@ export abstract class Appliance extends ScreenElement {
 
     this.eventEmitter = eventEmitter;
     this.sprite = sprite;
+    this.sprite.scale = spriteScale;
 
     this.heldItem = null;
 
@@ -77,8 +79,7 @@ export abstract class Appliance extends ScreenElement {
     });
 
     this.on("pointerenter", (evt) => {
-      this.state = "hovered";
-      engine.add(this.tempHighlight);
+      this.eventEmitter.emit("hoverStart", new InteractEvent(this));
     });
 
     this.on("pointerleave", (evt) => {
@@ -96,6 +97,15 @@ export abstract class Appliance extends ScreenElement {
       this.state = "idle";
       engine.remove(this.tempHighlight);
       this.stopInteract();
+      this.eventEmitter.emit("hoverEnd", new InteractEvent(this));
+    }
+  }
+
+  public setActive(active: boolean, engine: Engine<any>) {
+    if (active) {
+      engine.add(this.tempHighlight);
+    } else {
+      engine.remove(this.tempHighlight);
     }
   }
 

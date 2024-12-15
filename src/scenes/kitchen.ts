@@ -1,4 +1,13 @@
-import { Engine, Scene, SceneActivationContext, Vector, vec } from "excalibur";
+import {
+  Actor,
+  Engine,
+  Resource,
+  Scene,
+  SceneActivationContext,
+  ScreenElement,
+  Vector,
+  vec,
+} from "excalibur";
 import { Fridge } from "../appliances/fridge";
 import { Glove } from "../glove";
 import { ApplianceEventEmitter, GuestEventEmitter } from "../events";
@@ -21,6 +30,7 @@ import { StarCounter } from "@/ui/starCounter";
 import { GuestHardStarOne } from "@/guests/guestHardStarOne";
 import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
 import { GuestHardStarThree } from "@/guests/guestHardStarThree";
+import { Resources, spriteScale } from "@/resources";
 
 const GUEST_SPAWN_TIME_MS = 1000;
 
@@ -45,17 +55,17 @@ export class Kitchen extends Scene {
     slot3: GuestSlot;
   } = {
     slot1: {
-      pos: vec(600, 100),
+      pos: vec(590, 190),
       readyTime: 0,
       guest: null,
     },
     slot2: {
-      pos: vec(400, 100),
+      pos: vec(433, 190),
       readyTime: 0,
       guest: null,
     },
     slot3: {
-      pos: vec(200, 100),
+      pos: vec(277, 190),
       readyTime: 0,
       guest: null,
     },
@@ -97,13 +107,13 @@ export class Kitchen extends Scene {
     );
 
     // Put star guests somewhere in the first 5
-    if (firstStarIndex) {
+    if (firstStarIndex > -1) {
       const guest = this.allGuests.splice(firstStarIndex, 1)[0];
       this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
-    } else if (secondStarIndex) {
+    } else if (secondStarIndex > -1) {
       const guest = this.allGuests.splice(secondStarIndex, 1)[0];
       this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
-    } else if (thirdStarIndex) {
+    } else if (thirdStarIndex > -1) {
       const guest = this.allGuests.splice(thirdStarIndex, 1)[0];
       this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
     }
@@ -112,29 +122,49 @@ export class Kitchen extends Scene {
 
     // Take 3 guests to seed level
     this.queuedGuests = [...Array(3)].map((_e, i) => {
-      const guest = this.allGuests.pop();
+      const guest = this.allGuests.shift();
       return guest;
     });
 
-    const buzzCounter = new BuzzCounter(vec(25, 5));
-    const cashCounter = new CashCounter(vec(25, 35));
-    const dayCounter = new DayCounter(vec(25, 65));
-    const starCounter = new StarCounter(vec(25, 95));
+    const kitchenBackground = new ScreenElement({ z: -2 });
+    const bgSprite = Resources.KitchenBackground.toSprite();
+    bgSprite.scale = spriteScale;
+    kitchenBackground.graphics.use(bgSprite);
+    this.add(kitchenBackground);
+
+    const buzzCounter = new BuzzCounter(vec(885, 5));
+    const cashCounter = new CashCounter(vec(885, 35));
+    const dayCounter = new DayCounter(vec(885, 65));
+    const starCounter = new StarCounter(vec(885, 95));
     this.timeCounter = new TimeCounter(
       Math.ceil(this.maxTimeMS / 1000),
       vec(700, 5)
     );
 
-    const fridge = new Fridge(applianceEventEmitter, vec(100, 250));
-    const stove = new Stove(applianceEventEmitter, vec(250, 250));
-    const counter1 = new Counter(applianceEventEmitter, vec(400, 250));
-    const counter2 = new Counter(applianceEventEmitter, vec(550, 250));
-    const counter3 = new Counter(applianceEventEmitter, vec(700, 250));
-    const trash = new Trash(applianceEventEmitter, vec(100, 500));
-    const bunCrate = new BunCrate(applianceEventEmitter, vec(250, 500));
-    const cheeseCrate = new CheeseCrate(applianceEventEmitter, vec(400, 500));
-    const tomatoCrate = new TomatoCrate(applianceEventEmitter, vec(550, 500));
-    const lettuceCrate = new LettuceCrate(applianceEventEmitter, vec(700, 500));
+    // Rendered in this order to prevent impossible overlap
+    const fridge = new Fridge(applianceEventEmitter, vec(90, 260));
+    const trash = new Trash(applianceEventEmitter, vec(768, 292));
+    const stove = new Stove(applianceEventEmitter, vec(230, 308));
+    const counter3 = new Counter(
+      applianceEventEmitter,
+      vec(637, 300),
+      Resources.Counter3.toSprite()
+    );
+    const counter1 = new Counter(
+      applianceEventEmitter,
+      vec(364, 300),
+      Resources.Counter1.toSprite()
+    );
+    const counter2 = new Counter(
+      applianceEventEmitter,
+      vec(503, 300),
+      Resources.Counter2.toSprite()
+    );
+
+    const bunCrate = new BunCrate(applianceEventEmitter, vec(182, 480));
+    const tomatoCrate = new TomatoCrate(applianceEventEmitter, vec(681, 481));
+    const cheeseCrate = new CheeseCrate(applianceEventEmitter, vec(345, 480));
+    const lettuceCrate = new LettuceCrate(applianceEventEmitter, vec(518, 480));
     this.glove = new Glove(applianceEventEmitter, guestEventEmitter);
 
     this.add(buzzCounter);
@@ -144,15 +174,15 @@ export class Kitchen extends Scene {
     this.add(this.timeCounter);
 
     this.add(fridge);
+    this.add(trash);
+    this.add(stove);
+    this.add(counter3);
     this.add(counter1);
     this.add(counter2);
-    this.add(counter3);
-    this.add(stove);
     this.add(bunCrate);
     this.add(tomatoCrate);
-    this.add(lettuceCrate);
     this.add(cheeseCrate);
-    this.add(trash);
+    this.add(lettuceCrate);
 
     this.add(this.glove);
 
@@ -243,7 +273,7 @@ export class Kitchen extends Scene {
     this.guestSlot[targetSlotKey].readyTime = Date.now() + GUEST_SPAWN_TIME_MS;
     this.guestSlot[targetSlotKey].guest = null;
 
-    const guestToQueue = this.allGuests.pop();
+    const guestToQueue = this.allGuests.shift();
     this.queuedGuests.push(guestToQueue);
   }
 
@@ -260,7 +290,7 @@ export class Kitchen extends Scene {
       if (deckContainsCandidate) {
         guest = candidate;
       } else if (this.allGuests.length > 0) {
-        this.queuedGuests = [this.allGuests.pop()];
+        this.queuedGuests = [this.allGuests.shift()];
       }
     }
     return guest;

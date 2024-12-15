@@ -3,10 +3,8 @@ import { loader } from "./resources";
 import { Kitchen } from "./scenes/kitchen";
 import { Shop } from "./scenes/shop";
 
-// Goal is to keep main.ts small and just enough to configure the engine
-
 const game = new Engine({
-  width: 800, // Logical width and height in game pixels
+  width: 1060,
   height: 600,
   scenes: {
     kitchen: {

@@ -4,12 +4,14 @@ import {
   Label,
   ScreenElement,
   Sprite,
+  TextAlign,
   Vector,
   vec,
 } from "excalibur";
 import { Guest } from "./guest";
 import { InviteGuestButton } from "@/ui/inviteGuestButton";
 import { PlayerData } from "@/playerData";
+import { DifficultyOptions } from "./guestOrder";
 
 // TODO: realistically, it needs a name, an image + icons, a price, and a description
 // The name / image + icons need to line up with the actual item
@@ -95,46 +97,74 @@ export class GuestInviteCard extends ScreenElement {
   private addIcons(startingYPos: number) {
     const reward = this.guest.getReward();
     let yPos = startingYPos;
-    if (reward.buzz) {
+
+    if (this.guest.getDifficulty()) {
+      let text = "";
+      switch (this.guest.getDifficulty()) {
+        case DifficultyOptions.NA:
+          text = "N/A";
+          break;
+        case DifficultyOptions.Easy:
+          text = "Easy";
+          break;
+        case DifficultyOptions.Medium:
+          text = "Med";
+          break;
+        case DifficultyOptions.Hard:
+          text = "Hard";
+          break;
+      }
       this.addChild(
         new Label({
-          pos: vec(20, yPos),
-          text: `B ${reward.buzz}`,
-          font: new Font({ size: 24 }),
+          pos: vec(60, yPos),
+          text,
+          font: new Font({ size: 18, textAlign: TextAlign.Right }),
         })
       );
 
       yPos += 20;
     }
+    // TODO: temporarily disabling icons as this was a temp solution that didn't demo well
+    // if (reward.buzz) {
+    //   this.addChild(
+    //     new Label({
+    //       pos: vec(20, yPos),
+    //       text: `B ${reward.buzz}`,
+    //       font: new Font({ size: 24 }),
+    //     })
+    //   );
 
-    if (reward.cash) {
-      this.addChild(
-        new Label({
-          pos: vec(20, yPos),
-          text: `$ ${reward.cash}`,
-          font: new Font({ size: 24 }),
-        })
-      );
+    //   yPos += 20;
+    // }
 
-      yPos += 20;
-    }
+    // if (reward.cash) {
+    //   this.addChild(
+    //     new Label({
+    //       pos: vec(20, yPos),
+    //       text: `$ ${reward.cash}`,
+    //       font: new Font({ size: 24 }),
+    //     })
+    //   );
 
-    if (reward.star) {
-      this.addChild(
-        new Label({
-          pos: vec(20, yPos),
-          text: `* ${reward.star}`,
-          font: new Font({ size: 24 }),
-        })
-      );
+    //   yPos += 20;
+    // }
 
-      yPos += 20;
-    }
+    // if (reward.star) {
+    //   this.addChild(
+    //     new Label({
+    //       pos: vec(20, yPos),
+    //       text: `* ${reward.star}`,
+    //       font: new Font({ size: 24 }),
+    //     })
+    //   );
 
-    if (this.guest.getIcon()) {
-      const label = this.guest.getIcon();
-      label.pos = vec(20, yPos);
-      this.addChild(label);
-    }
+    //   yPos += 20;
+    // }
+
+    // if (this.guest.getIcon()) {
+    //   const label = this.guest.getIcon();
+    //   label.pos = vec(20, yPos);
+    //   this.addChild(label);
+    // }
   }
 }

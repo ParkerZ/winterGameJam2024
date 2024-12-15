@@ -9,6 +9,7 @@ import {
 } from "@/events";
 import { PlayerData } from "@/playerData";
 import { Tooltip } from "@/ui/tooltip";
+import { guestScale } from "@/resources";
 
 export type GuestState =
   | "dormant"
@@ -45,16 +46,23 @@ export class Guest extends ScreenElement {
   constructor({
     eventEmitter,
     tooltipText = "",
+    sprite,
   }: {
     eventEmitter?: GuestEventEmitter;
     tooltipText?: string;
+    sprite?: Sprite;
   }) {
     super({
       anchor: Vector.Half,
+      z: -1,
     });
 
     this.eventEmitter = eventEmitter;
     this.state = GuestStates.Dormant;
+    if (sprite) {
+      this.sprite = sprite;
+      this.sprite.scale = guestScale;
+    }
 
     this.tooltip = tooltipText ? new Tooltip({ text: tooltipText }) : null;
   }
@@ -132,6 +140,10 @@ export class Guest extends ScreenElement {
 
   public getIcon(): Label | null {
     return null;
+  }
+
+  public getDifficulty(): Difficulty {
+    return this.difficulty;
   }
 
   public orderOrActivate() {

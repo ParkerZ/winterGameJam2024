@@ -53,7 +53,7 @@ export class GuestOrder extends ScreenElement {
     sprite.scale = vec(0.5, 0.5);
     this.graphics.use(sprite);
     this.addChild(this.burger);
-    this.burger.pos = this.burger.pos.add(vec(0, 60));
+    this.burger.pos = this.burger.pos.add(vec(0, 20));
   }
 
   public doesBurgerMatchOrder(incomingBurger: Burger): boolean {
