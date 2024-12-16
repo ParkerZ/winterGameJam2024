@@ -1,13 +1,23 @@
 import { PlayerData } from "@/playerData";
-import { Engine, Font, ScreenElement, Text, Vector, vec } from "excalibur";
+import { colorPrimaryBuzz } from "@/resources";
+import {
+  Color,
+  Engine,
+  Font,
+  ScreenElement,
+  Text,
+  TextAlign,
+  Vector,
+  vec,
+} from "excalibur";
 
 export class BuzzCounter extends ScreenElement {
   private count = 0;
   private text: Text;
 
-  constructor(pos: Vector) {
+  constructor() {
     super({
-      pos,
+      pos: vec(1030, 44),
       z: 2,
     });
 
@@ -16,8 +26,13 @@ export class BuzzCounter extends ScreenElement {
 
   private updateGraphics() {
     this.text = new Text({
-      text: `Burger Buzz: ${this.count}`,
-      font: new Font({ size: 24 }),
+      text: `${this.count}`,
+      font: new Font({
+        family: "Kaph",
+        size: 36,
+        color: colorPrimaryBuzz,
+        textAlign: TextAlign.Right,
+      }),
     });
 
     this.graphics.use(this.text);

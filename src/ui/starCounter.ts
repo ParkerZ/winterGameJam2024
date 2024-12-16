@@ -1,13 +1,13 @@
 import { PlayerData } from "@/playerData";
+import { Resources } from "@/resources";
 import { Engine, Font, ScreenElement, Text, Vector, vec } from "excalibur";
 
 export class StarCounter extends ScreenElement {
   private count = 0;
   private text: Text;
 
-  constructor(pos: Vector) {
+  constructor() {
     super({
-      pos,
       z: 2,
     });
 
@@ -15,12 +15,26 @@ export class StarCounter extends ScreenElement {
   }
 
   private updateGraphics() {
-    this.text = new Text({
-      text: `Stars: ${this.count}/3`,
-      font: new Font({ size: 24 }),
-    });
+    this.removeAllChildren();
 
-    this.graphics.use(this.text);
+    const sprite = Resources.Star.toSprite();
+    if (this.count >= 1) {
+      const star1 = new ScreenElement({ pos: vec(875, 263) });
+      star1.graphics.use(sprite);
+      this.addChild(star1);
+    }
+
+    if (this.count >= 2) {
+      const star1 = new ScreenElement({ pos: vec(938, 263) });
+      star1.graphics.use(sprite);
+      this.addChild(star1);
+    }
+
+    if (this.count >= 3) {
+      const star = new ScreenElement({ pos: vec(1000, 263) });
+      star.graphics.use(sprite);
+      this.addChild(star);
+    }
   }
 
   onInitialize(engine: Engine<any>): void {

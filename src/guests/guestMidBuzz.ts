@@ -8,7 +8,11 @@ export class GuestMidBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+3 Buzz",
+      label: "Blogger",
+      tooltipText: {
+        buzz: "+3 Buzz",
+        difficulty: DifficultyOptions.Medium,
+      },
       sprite: Resources.Guest3.toSprite(),
     });
 

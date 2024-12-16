@@ -1,5 +1,11 @@
 # Cooking Game
 
+## Resources
+
+- [Kaph Font](https://ggbot.itch.io/kaph-font)
+- [Kitchen Assets](https://kaylousberg.itch.io/restaurant-bits)
+- [Character Assets](https://kenney.nl/assets/mini-characters-1)
+
 ## Get Started
 
 - Using [Node.js](https://nodejs.org/en/) 14 (LTS) and [npm](https://www.npmjs.com/)

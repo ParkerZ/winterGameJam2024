@@ -2,6 +2,7 @@ import { CrossFade, Engine } from "excalibur";
 import { loader } from "./resources";
 import { Kitchen } from "./scenes/kitchen";
 import { Shop } from "./scenes/shop";
+import "./main.css";
 
 const game = new Engine({
   width: 1060,

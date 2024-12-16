@@ -9,7 +9,7 @@ export const DifficultyOptions: Record<string, Difficulty> = {
   Easy: "easy",
   Medium: "medium",
   Hard: "hard",
-  NA: "na",
+  None: "na",
 };
 
 export class GuestOrder extends ScreenElement {

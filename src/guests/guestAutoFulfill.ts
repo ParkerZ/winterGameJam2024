@@ -9,12 +9,16 @@ export class GuestAutoFulfill extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "Completes\nanother guest's\norder",
+      label: "Police Officer",
+      tooltipText: {
+        top: "Completes\nanother\nguest's order",
+        difficulty: DifficultyOptions.None,
+      },
       sprite: Resources.Guest10.toSprite(),
     });
 
     this.reward = new Reward({});
-    this.difficulty = DifficultyOptions.NA;
+    this.difficulty = DifficultyOptions.None;
   }
 
   // TODO: add cancel option

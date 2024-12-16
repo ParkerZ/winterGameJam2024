@@ -7,11 +7,17 @@ import { DifficultyOptions } from "./guestOrder";
 import { GuestRemove } from "./guestRemove";
 import { GuestAutoFulfill } from "./guestAutoFulfill";
 
+// TODO: figure out growing tooltip
 export class GuestSimpleWatch extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+2 Buzz per\norder served\nwhile waiting",
+      label: "Watcher",
+      tooltipText: {
+        top: "Gains +2 Buzz\nper order\nserved while\nwaiting",
+        buzz: "+2 Buzz",
+        difficulty: DifficultyOptions.Easy,
+      },
       sprite: Resources.Guest6.toSprite(),
     });
 

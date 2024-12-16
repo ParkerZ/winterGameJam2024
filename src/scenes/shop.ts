@@ -4,9 +4,7 @@ import { GuestAutoFulfill } from "@/guests/guestAutoFulfill";
 import { GuestFreeBuzz } from "@/guests/guestFreeBuzz";
 import { GuestHardBuzz } from "@/guests/guestHardBuzz";
 import { GuestHardBuzzCash } from "@/guests/guestHardBuzzCash";
-import { GuestHardStarOne } from "@/guests/guestHardStarOne";
-import { GuestHardStarThree } from "@/guests/guestHardStarThree";
-import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
+import { GuestHardStar } from "@/guests/guestHardStar";
 import { GuestInviteCard } from "@/guests/guestInviteCard";
 import { GuestMidBuzz } from "@/guests/guestMidBuzz";
 import { GuestMidCashForBuzz } from "@/guests/guestMidCashForBuzz";
@@ -48,10 +46,15 @@ export class Shop extends Scene {
     shopBackground.graphics.use(bgSprite);
     this.add(shopBackground);
 
-    const buzzCounter = new BuzzCounter(vec(885, 5));
-    const cashCounter = new CashCounter(vec(885, 35));
-    const dayCounter = new DayCounter(vec(885, 65));
-    const starCounter = new StarCounter(vec(885, 95));
+    const sidePanel = new ScreenElement({ x: 860, y: 0, z: -2 });
+    const panelSprite = Resources.SidePanel.toSprite();
+    sidePanel.graphics.use(panelSprite);
+    this.add(sidePanel);
+
+    const buzzCounter = new BuzzCounter();
+    const cashCounter = new CashCounter();
+    const dayCounter = new DayCounter();
+    const starCounter = new StarCounter();
 
     const invite1 = new GuestInviteCard({
       pos: vec(85, 150),
@@ -136,29 +139,9 @@ export class Shop extends Scene {
 
     const invite13 = new GuestInviteCard({
       pos: vec(85, 450),
-      GuestType: GuestHardStarOne,
+      GuestType: GuestHardStar,
       buzzCost: 20,
       max: 1,
-      minStar: 0,
-      isDisabled: PlayerData.star >= 1,
-    });
-
-    const invite14 = new GuestInviteCard({
-      pos: vec(210, 450),
-      GuestType: GuestHardStarTwo,
-      buzzCost: 20,
-      max: 1,
-      minStar: 1,
-      isDisabled: PlayerData.star >= 2,
-    });
-
-    const invite15 = new GuestInviteCard({
-      pos: vec(335, 450),
-      GuestType: GuestHardStarThree,
-      buzzCost: 20,
-      max: 1,
-      minStar: 2,
-      isDisabled: PlayerData.star >= 3,
     });
 
     const upgrade1 = new StoveUpgradeCard({
@@ -197,8 +180,6 @@ export class Shop extends Scene {
     this.add(invite11);
     this.add(invite12);
     this.add(invite13);
-    this.add(invite14);
-    this.add(invite15);
 
     this.add(upgrade1);
     this.add(upgrade2);

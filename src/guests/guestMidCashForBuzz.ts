@@ -8,7 +8,12 @@ export class GuestMidCashForBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+4 Buzz\n-1 $",
+      label: "Influencer",
+      tooltipText: {
+        buzz: "+4 Buzz",
+        cash: "-1 Cash",
+        difficulty: DifficultyOptions.Medium,
+      },
       sprite: Resources.Guest5.toSprite(),
     });
 

@@ -30,7 +30,7 @@ import { StarCounter } from "@/ui/starCounter";
 import { GuestHardStarOne } from "@/guests/guestHardStarOne";
 import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
 import { GuestHardStarThree } from "@/guests/guestHardStarThree";
-import { Resources, spriteScale } from "@/resources";
+import { Resources, sidePanelScale, spriteScale } from "@/resources";
 
 const GUEST_SPAWN_TIME_MS = 1000;
 
@@ -132,10 +132,15 @@ export class Kitchen extends Scene {
     kitchenBackground.graphics.use(bgSprite);
     this.add(kitchenBackground);
 
-    const buzzCounter = new BuzzCounter(vec(885, 5));
-    const cashCounter = new CashCounter(vec(885, 35));
-    const dayCounter = new DayCounter(vec(885, 65));
-    const starCounter = new StarCounter(vec(885, 95));
+    const sidePanel = new ScreenElement({ x: 860, y: 0, z: -2 });
+    const panelSprite = Resources.SidePanel.toSprite();
+    sidePanel.graphics.use(panelSprite);
+    this.add(sidePanel);
+
+    const buzzCounter = new BuzzCounter();
+    const cashCounter = new CashCounter();
+    const dayCounter = new DayCounter();
+    const starCounter = new StarCounter();
     this.timeCounter = new TimeCounter(
       Math.ceil(this.maxTimeMS / 1000),
       vec(700, 5)

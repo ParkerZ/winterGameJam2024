@@ -6,13 +6,13 @@ import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
 import { PlayerData } from "@/playerData";
 
-export class GuestHardStarOne extends Guest {
+export class GuestHardStar extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
       label: "Critic",
       tooltipText: {
-        top: "Gives 1st star\nthen removes\nfrom deck",
+        top: "Awards a star\nthen removes\nself from\nyour invite\nlist",
         difficulty: DifficultyOptions.Hard,
       },
       sprite: Resources.Guest13.toSprite(),

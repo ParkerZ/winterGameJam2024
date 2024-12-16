@@ -1,13 +1,23 @@
 import { PlayerData } from "@/playerData";
-import { Engine, Font, ScreenElement, Text, Vector, vec } from "excalibur";
+import { colorLabel } from "@/resources";
+import {
+  Color,
+  Engine,
+  Font,
+  ScreenElement,
+  Text,
+  TextAlign,
+  Vector,
+  vec,
+} from "excalibur";
 
 export class DayCounter extends ScreenElement {
   private count = 0;
   private text: Text;
 
-  constructor(pos: Vector) {
+  constructor() {
     super({
-      pos,
+      pos: vec(1037, 210),
       z: 2,
     });
 
@@ -16,8 +26,13 @@ export class DayCounter extends ScreenElement {
 
   private updateGraphics() {
     this.text = new Text({
-      text: `Day: ${this.count}/${PlayerData.maxDay}`,
-      font: new Font({ size: 25 }),
+      text: `${this.count}/${PlayerData.maxDay}`,
+      font: new Font({
+        family: "Kaph",
+        size: 17,
+        color: colorLabel,
+        textAlign: TextAlign.Right,
+      }),
     });
 
     this.graphics.use(this.text);

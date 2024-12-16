@@ -1,6 +1,6 @@
 import { GuestEventEmitter } from "@/events";
 import { Guest } from "./guest";
-import { Font, Label, vec } from "excalibur";
+import { Font, Label } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
@@ -9,12 +9,17 @@ export class GuestFreeBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+1 Buzz",
+      label: "Chatterbox",
+      tooltipText: {
+        top: "Orders no\nfood",
+        buzz: "+1 Buzz",
+        difficulty: DifficultyOptions.None,
+      },
       sprite: Resources.Guest4.toSprite(),
     });
 
     this.reward = new Reward({ buzz: 1 });
-    this.difficulty = DifficultyOptions.NA;
+    this.difficulty = DifficultyOptions.None;
     this.canBeAutoFulfilled = true;
   }
 

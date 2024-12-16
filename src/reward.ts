@@ -23,8 +23,8 @@ export class Reward {
     PlayerData.buzz = Math.max(PlayerData.buzz + this.buzz, 0);
     PlayerData.cash = Math.max(PlayerData.cash + this.cash, 0);
 
-    if (this.star && PlayerData.star === this.star - 1) {
-      PlayerData.star = this.star;
+    if (this.star) {
+      PlayerData.star += this.star;
     }
 
     if (PlayerData.star === 3) {

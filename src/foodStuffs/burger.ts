@@ -78,7 +78,6 @@ export class Burger extends Food {
     // Align all members
     members.forEach((member) => (member.offset.y += runningHeight / 2));
 
-    // TODO: Go through all graphics members and add 1/2 running height?
     this.graphics.use(new GraphicsGroup({ members }));
   }
 

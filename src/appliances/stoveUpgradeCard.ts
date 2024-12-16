@@ -36,7 +36,10 @@ export class StoveUpgradeCard extends ScreenElement {
     this.max = max;
     this.sprite = Resources.StoveUpgrade.toSprite();
     this.sprite.scale = spriteScale;
-    this.tooltip = new Tooltip({ text: "Stove cooks\nfaster" });
+    this.tooltip = new Tooltip({
+      label: "Quick Cook",
+      topText: "Burgers cook\nfaster",
+    });
   }
 
   onInitialize(engine: Engine<any>): void {

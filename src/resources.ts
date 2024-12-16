@@ -1,4 +1,4 @@
-import { ImageSource, Loader, vec } from "excalibur";
+import { Color, ImageSource, Loader, vec } from "excalibur";
 import bun from "./images/bun.png";
 import bunBottom from "./images/bunButtom.png";
 import bunCrate from "./images/bunCrate.png";
@@ -35,11 +35,15 @@ import lettuceCrate from "./images/lettuceCrate.png";
 import lettuceSlice from "./images/lettuceSlice.png";
 import mince from "./images/mince.png";
 import orderBanner from "./images/tempOrderBanner.png";
+import sidePanel from "./images/tempSidePanel.png";
+import sidePanel2 from "./images/tempSidePanel2.png";
+import star from "./images/star.png";
 import stove from "./images/stove.png";
 import stoveUpgrade from "./images/stoveUpgrade.png";
 import tomato from "./images/tomato.png";
 import tomatoCrate from "./images/tomatoCrate.png";
 import tomatoSlice from "./images/tomatoSlice.png";
+import tooltip from "./images/tooltip.png";
 import trash from "./images/trash.png";
 
 export const Resources = {
@@ -78,11 +82,14 @@ export const Resources = {
   LettuceSlice: new ImageSource(lettuceSlice),
   Mince: new ImageSource(mince),
   OrderBanner: new ImageSource(orderBanner),
+  SidePanel: new ImageSource(sidePanel2),
+  Star: new ImageSource(star),
   Stove: new ImageSource(stove),
   StoveUpgrade: new ImageSource(stoveUpgrade),
   Tomato: new ImageSource(tomato),
   TomatoSlice: new ImageSource(tomatoSlice),
   TomatoCrate: new ImageSource(tomatoCrate),
+  Tooltip: new ImageSource(tooltip),
   Trash: new ImageSource(trash),
 } as const;
 
@@ -100,3 +107,11 @@ export const spriteScale = vec(600 / 1557, 600 / 1557);
 export const cutoutScale = vec(580 / 1557, 580 / 1557);
 
 export const guestScale = vec(0.425, 0.425);
+
+export const sidePanelScale = vec(200 / 4252, 200 / 4252);
+
+export const colorLabel = new Color(255, 255, 243);
+export const colorPrimaryBuzz = new Color(247, 157, 108);
+export const colorSecondaryBuzz = new Color(115, 80, 72);
+export const colorPrimaryCash = new Color(107, 242, 193);
+export const colorSecondaryCash = new Color(63, 140, 126);

@@ -8,7 +8,11 @@ export class GuestHardBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+6 Buzz",
+      label: "Celebrity",
+      tooltipText: {
+        buzz: "+6 Buzz",
+        difficulty: DifficultyOptions.Hard,
+      },
       sprite: Resources.Guest8.toSprite(),
     });
 

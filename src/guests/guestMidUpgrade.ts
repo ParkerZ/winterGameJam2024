@@ -5,11 +5,17 @@ import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
 
+// TODO: figure out growing tooltip
 export class GuestMidUpgrade extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "Permanently\ngains +1 Buzz\nwhen served",
+      label: "Supporter",
+      tooltipText: {
+        top: "Permanently\ngains +1 Buzz\nwhen served",
+        buzz: "+1 Buzz",
+        difficulty: DifficultyOptions.Medium,
+      },
       sprite: Resources.Guest7.toSprite(),
     });
 

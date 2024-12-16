@@ -12,16 +12,13 @@ import { Guest } from "./guest";
 import { InviteGuestButton } from "@/ui/inviteGuestButton";
 import { PlayerData } from "@/playerData";
 import { DifficultyOptions } from "./guestOrder";
+import { Resources, colorPrimaryBuzz, colorPrimaryCash } from "@/resources";
 
-// TODO: realistically, it needs a name, an image + icons, a price, and a description
-// The name / image + icons need to line up with the actual item
-// I think a Guest will have a core of an image + icons, plus a tooltip description
 export class GuestInviteCard extends ScreenElement {
   protected GuestType: typeof Guest;
   protected guest: Guest;
   protected buzzCost: number;
   protected max: number;
-  protected minStar: number;
   protected isDisabled: boolean;
 
   constructor({
@@ -29,14 +26,12 @@ export class GuestInviteCard extends ScreenElement {
     GuestType,
     buzzCost,
     max = 4,
-    minStar = 0,
     isDisabled = false,
   }: {
     pos: Vector;
     GuestType: typeof Guest;
     buzzCost: number;
     max?: number;
-    minStar?: number;
     isDisabled?: boolean;
   }) {
     super({ pos, anchor: Vector.Half });
@@ -45,7 +40,6 @@ export class GuestInviteCard extends ScreenElement {
     this.GuestType = GuestType;
     this.buzzCost = buzzCost;
     this.max = max;
-    this.minStar = minStar;
     this.isDisabled = isDisabled;
   }
 
@@ -58,13 +52,14 @@ export class GuestInviteCard extends ScreenElement {
       font: new Font({ size: 24 }),
     });
 
+    // TODO: this count should move and it should only be on the invite card
     this.addChild(count);
 
+    // TODO: the remaining icons should all be on the guest
     this.addIcons(-45);
 
     if (
       this.max > PlayerData.getCountOfGuestType(this.GuestType) &&
-      this.minStar <= PlayerData.star &&
       !this.isDisabled
     ) {
       const button = new InviteGuestButton(this.buzzCost, vec(0, 50));
@@ -101,8 +96,8 @@ export class GuestInviteCard extends ScreenElement {
     if (this.guest.getDifficulty()) {
       let text = "";
       switch (this.guest.getDifficulty()) {
-        case DifficultyOptions.NA:
-          text = "N/A";
+        case DifficultyOptions.None:
+          text = "None";
           break;
         case DifficultyOptions.Easy:
           text = "Easy";
@@ -116,50 +111,56 @@ export class GuestInviteCard extends ScreenElement {
       }
       this.addChild(
         new Label({
-          pos: vec(60, yPos),
+          pos: vec(-20, -65),
           text,
           font: new Font({ size: 18, textAlign: TextAlign.Right }),
+        })
+      );
+    }
+
+    if (reward.star) {
+      const star = new ScreenElement({ pos: vec(30, yPos) });
+      const sprite = Resources.Star.toSprite();
+      sprite.scale = Vector.Half;
+      star.graphics.use(sprite);
+      this.addChild(star);
+
+      yPos += 20;
+    }
+
+    if (reward.buzz) {
+      this.addChild(
+        new Label({
+          pos: vec(50, yPos),
+          text: `${reward.buzz}`,
+          font: new Font({
+            family: "Kaph",
+            size: 18,
+            color: colorPrimaryBuzz,
+            textAlign: TextAlign.Right,
+          }),
         })
       );
 
       yPos += 20;
     }
-    // TODO: temporarily disabling icons as this was a temp solution that didn't demo well
-    // if (reward.buzz) {
-    //   this.addChild(
-    //     new Label({
-    //       pos: vec(20, yPos),
-    //       text: `B ${reward.buzz}`,
-    //       font: new Font({ size: 24 }),
-    //     })
-    //   );
 
-    //   yPos += 20;
-    // }
+    if (reward.cash) {
+      this.addChild(
+        new Label({
+          pos: vec(50, yPos),
+          text: `${reward.cash}`,
+          font: new Font({
+            family: "Kaph",
+            size: 18,
+            color: colorPrimaryCash,
+            textAlign: TextAlign.Right,
+          }),
+        })
+      );
 
-    // if (reward.cash) {
-    //   this.addChild(
-    //     new Label({
-    //       pos: vec(20, yPos),
-    //       text: `$ ${reward.cash}`,
-    //       font: new Font({ size: 24 }),
-    //     })
-    //   );
-
-    //   yPos += 20;
-    // }
-
-    // if (reward.star) {
-    //   this.addChild(
-    //     new Label({
-    //       pos: vec(20, yPos),
-    //       text: `* ${reward.star}`,
-    //       font: new Font({ size: 24 }),
-    //     })
-    //   );
-
-    //   yPos += 20;
-    // }
+      yPos += 20;
+    }
 
     // if (this.guest.getIcon()) {
     //   const label = this.guest.getIcon();

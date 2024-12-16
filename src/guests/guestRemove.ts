@@ -9,12 +9,16 @@ export class GuestRemove extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "Removes any\nguest",
+      label: "Meanie",
+      tooltipText: {
+        top: "Removes a\nguest from\nyour invite\nlist",
+        difficulty: DifficultyOptions.None,
+      },
       sprite: Resources.Guest12.toSprite(),
     });
 
     this.reward = new Reward({});
-    this.difficulty = DifficultyOptions.NA;
+    this.difficulty = DifficultyOptions.None;
   }
 
   override activateAbility(): void {

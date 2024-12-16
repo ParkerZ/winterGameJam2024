@@ -10,7 +10,11 @@ export class GuestHardStarTwo extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "Gives 2nd star\nthen removes\nfrom deck",
+      label: "Critic",
+      tooltipText: {
+        top: "Gives 2st star\nthen removes\nfrom deck",
+        difficulty: DifficultyOptions.Hard,
+      },
       sprite: Resources.Guest13.toSprite(),
     });
 

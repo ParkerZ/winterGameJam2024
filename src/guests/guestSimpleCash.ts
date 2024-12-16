@@ -9,7 +9,11 @@ export class GuestSimpleCash extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+1 $",
+      label: "Tipper",
+      tooltipText: {
+        cash: "+1 Cash",
+        difficulty: DifficultyOptions.Easy,
+      },
       sprite: Resources.Guest2.toSprite(),
     });
 

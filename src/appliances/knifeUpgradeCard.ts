@@ -36,7 +36,10 @@ export class KnifeUpgradeCard extends ScreenElement {
     this.max = max;
     this.sprite = Resources.KnifeUpgrade.toSprite();
     this.sprite.scale = spriteScale;
-    this.tooltip = new Tooltip({ text: "Knife chops\nfaster" });
+    this.tooltip = new Tooltip({
+      label: "Quick Chop",
+      topText: "Knife chops\nfaster",
+    });
   }
 
   onInitialize(engine: Engine<any>): void {

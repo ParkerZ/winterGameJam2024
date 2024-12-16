@@ -9,7 +9,11 @@ export class GuestSimpleBuzz extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
-      tooltipText: "+1 Buzz",
+      label: "Old Friend",
+      tooltipText: {
+        buzz: "+1 Buzz",
+        difficulty: DifficultyOptions.Easy,
+      },
       sprite: Resources.Guest1.toSprite(),
     });
 

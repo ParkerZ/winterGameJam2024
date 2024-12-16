@@ -26,7 +26,6 @@ export const GuestStates: Record<string, GuestState> = {
   Cleanup: "cleanup",
 };
 
-// TODO: will eventually need tooltip, maybe a name
 export class Guest extends ScreenElement {
   protected eventEmitter: GuestEventEmitter;
 
@@ -45,11 +44,18 @@ export class Guest extends ScreenElement {
 
   constructor({
     eventEmitter,
-    tooltipText = "",
+    label = "",
+    tooltipText = {},
     sprite,
   }: {
     eventEmitter?: GuestEventEmitter;
-    tooltipText?: string;
+    tooltipText?: {
+      top?: string;
+      buzz?: string;
+      cash?: string;
+      difficulty?: Difficulty;
+    };
+    label?: string;
     sprite?: Sprite;
   }) {
     super({
@@ -64,7 +70,15 @@ export class Guest extends ScreenElement {
       this.sprite.scale = guestScale;
     }
 
-    this.tooltip = tooltipText ? new Tooltip({ text: tooltipText }) : null;
+    this.tooltip = tooltipText
+      ? new Tooltip({
+          label: label,
+          topText: tooltipText.top,
+          buzzText: tooltipText.buzz,
+          cashText: tooltipText.cash,
+          difficulty: tooltipText.difficulty,
+        })
+      : null;
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -151,7 +165,7 @@ export class Guest extends ScreenElement {
       return;
     }
 
-    if (this.difficulty === DifficultyOptions.NA) {
+    if (this.difficulty === DifficultyOptions.None) {
       this.state = GuestStates.Activating;
       this.activateAbility();
       return;
