@@ -53,6 +53,7 @@ export class Glove extends ScreenElement {
     this.guestInteractionOverride = GuestInteractionOverrides.None;
   }
 
+  // TODO: update temp glove
   onInitialize(engine: Engine<any>): void {
     this.activeAppliances = [];
     const sprite = Resources.Glove.toSprite();
@@ -118,7 +119,9 @@ export class Glove extends ScreenElement {
     });
 
     this.guestEventEmitter.on("interact", (evt) => {
-      this.interactWithGuest(evt.guest, engine);
+      if (this.activeAppliances.length === 0) {
+        this.interactWithGuest(evt.guest, engine);
+      }
     });
 
     this.guestEventEmitter.on("autoFulfillActivate", (evt) => {
@@ -154,6 +157,7 @@ export class Glove extends ScreenElement {
     } else if (!this.heldItem && otherItem) {
       this.heldItem = otherItem;
       this.addChild(this.heldItem);
+      this.heldItem.pos = vec(-25, -25);
     } else if (this.heldItem && otherItem) {
       // If both have an item, determine which goes where
       // First, drop and return food if holding the same food as a food spawn appliance
@@ -222,6 +226,7 @@ export class Glove extends ScreenElement {
     this.removeChild(this.heldItem);
     this.heldItem = burger;
     this.addChild(this.heldItem);
+    this.heldItem.pos = vec(-25, -25);
   }
 
   private makeBurgerFromEligibleIngredients(

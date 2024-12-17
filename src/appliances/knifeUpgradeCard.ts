@@ -4,11 +4,12 @@ import {
   Label,
   ScreenElement,
   Sprite,
+  TextAlign,
   Vector,
   vec,
 } from "excalibur";
 import { PlayerData } from "@/playerData";
-import { Resources, spriteScale } from "@/resources";
+import { Resources, colorLabel, spriteScale } from "@/resources";
 import { UpgradeSkillButton } from "@/ui/UpgradeSkillButton";
 import { Tooltip } from "@/ui/tooltip";
 
@@ -46,9 +47,14 @@ export class KnifeUpgradeCard extends ScreenElement {
     this.graphics.use(this.sprite);
 
     const count = new Label({
-      pos: vec(20, -65),
+      pos: vec(-40, -65),
       text: this.getCountText(),
-      font: new Font({ size: 24 }),
+      font: new Font({
+        family: "Kaph",
+        size: 18,
+        textAlign: TextAlign.Center,
+        color: colorLabel,
+      }),
     });
 
     this.addChild(count);

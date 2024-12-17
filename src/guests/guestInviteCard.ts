@@ -12,7 +12,12 @@ import { Guest } from "./guest";
 import { InviteGuestButton } from "@/ui/inviteGuestButton";
 import { PlayerData } from "@/playerData";
 import { DifficultyOptions } from "./guestOrder";
-import { Resources, colorPrimaryBuzz, colorPrimaryCash } from "@/resources";
+import {
+  Resources,
+  colorLabel,
+  colorPrimaryBuzz,
+  colorPrimaryCash,
+} from "@/resources";
 
 export class GuestInviteCard extends ScreenElement {
   protected GuestType: typeof Guest;
@@ -47,22 +52,23 @@ export class GuestInviteCard extends ScreenElement {
     this.addChild(this.guest);
 
     const count = new Label({
-      pos: vec(20, -65),
+      pos: vec(-40, -65),
       text: this.getCountText(),
-      font: new Font({ size: 24 }),
+      font: new Font({
+        family: "Kaph",
+        size: 18,
+        textAlign: TextAlign.Center,
+        color: colorLabel,
+      }),
     });
 
-    // TODO: this count should move and it should only be on the invite card
     this.addChild(count);
-
-    // TODO: the remaining icons should all be on the guest
-    this.addIcons(-45);
 
     if (
       this.max > PlayerData.getCountOfGuestType(this.GuestType) &&
       !this.isDisabled
     ) {
-      const button = new InviteGuestButton(this.buzzCost, vec(0, 50));
+      const button = new InviteGuestButton(this.buzzCost, vec(0, 60));
       this.addChild(button);
 
       button.on("pointerup", (evt) => {
@@ -87,85 +93,5 @@ export class GuestInviteCard extends ScreenElement {
         ? this.max
         : PlayerData.getCountOfGuestType(this.GuestType)
     }/${this.max}`;
-  }
-
-  private addIcons(startingYPos: number) {
-    const reward = this.guest.getReward();
-    let yPos = startingYPos;
-
-    if (this.guest.getDifficulty()) {
-      let text = "";
-      switch (this.guest.getDifficulty()) {
-        case DifficultyOptions.None:
-          text = "None";
-          break;
-        case DifficultyOptions.Easy:
-          text = "Easy";
-          break;
-        case DifficultyOptions.Medium:
-          text = "Med";
-          break;
-        case DifficultyOptions.Hard:
-          text = "Hard";
-          break;
-      }
-      this.addChild(
-        new Label({
-          pos: vec(-20, -65),
-          text,
-          font: new Font({ size: 18, textAlign: TextAlign.Right }),
-        })
-      );
-    }
-
-    if (reward.star) {
-      const star = new ScreenElement({ pos: vec(30, yPos) });
-      const sprite = Resources.Star.toSprite();
-      sprite.scale = Vector.Half;
-      star.graphics.use(sprite);
-      this.addChild(star);
-
-      yPos += 20;
-    }
-
-    if (reward.buzz) {
-      this.addChild(
-        new Label({
-          pos: vec(50, yPos),
-          text: `${reward.buzz}`,
-          font: new Font({
-            family: "Kaph",
-            size: 18,
-            color: colorPrimaryBuzz,
-            textAlign: TextAlign.Right,
-          }),
-        })
-      );
-
-      yPos += 20;
-    }
-
-    if (reward.cash) {
-      this.addChild(
-        new Label({
-          pos: vec(50, yPos),
-          text: `${reward.cash}`,
-          font: new Font({
-            family: "Kaph",
-            size: 18,
-            color: colorPrimaryCash,
-            textAlign: TextAlign.Right,
-          }),
-        })
-      );
-
-      yPos += 20;
-    }
-
-    // if (this.guest.getIcon()) {
-    //   const label = this.guest.getIcon();
-    //   label.pos = vec(20, yPos);
-    //   this.addChild(label);
-    // }
   }
 }

@@ -15,7 +15,12 @@ import { GuestSimpleCash } from "@/guests/guestSimpleCash";
 import { GuestSimpleCashPlus } from "@/guests/guestSimpleCashPlus";
 import { GuestSimpleWatch } from "@/guests/guestSimpleWatch";
 import { PlayerData } from "@/playerData";
-import { Resources, spriteScale } from "@/resources";
+import {
+  Resources,
+  colorLabel,
+  colorPrimaryBuzz,
+  spriteScale,
+} from "@/resources";
 import { BuzzCounter } from "@/ui/buzzCounter";
 import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
@@ -28,6 +33,8 @@ import {
   Scene,
   SceneActivationContext,
   ScreenElement,
+  Text,
+  TextAlign,
   Vector,
   vec,
 } from "excalibur";
@@ -40,11 +47,23 @@ export class Shop extends Scene {
       alert("Game over");
     }
 
-    const shopBackground = new ScreenElement({ z: -2 });
-    const bgSprite = Resources.FloorBg.toSprite();
-    bgSprite.scale = spriteScale;
-    shopBackground.graphics.use(bgSprite);
-    this.add(shopBackground);
+    // const shopBackground = new ScreenElement({ z: -2 });
+    // const bgSprite = Resources.FloorBg.toSprite();
+    // bgSprite.scale = spriteScale;
+    // shopBackground.graphics.use(bgSprite);
+    // this.add(shopBackground);
+    const topText = new ScreenElement({ pos: vec(425, 25) });
+    const topTextSprite = new Text({
+      text: "Add Guests To Your Invite List!",
+      font: new Font({
+        family: "Kaph",
+        size: 36,
+        color: colorLabel,
+        textAlign: TextAlign.Center,
+      }),
+    });
+    topText.graphics.use(topTextSprite);
+    this.add(topText);
 
     const sidePanel = new ScreenElement({ x: 860, y: 0, z: -2 });
     const panelSprite = Resources.SidePanel.toSprite();
@@ -56,110 +75,117 @@ export class Shop extends Scene {
     const dayCounter = new DayCounter();
     const starCounter = new StarCounter();
 
+    const deckSizeLabel = new Label({
+      pos: vec(960, 337),
+      anchor: Vector.Half,
+      text: `Invite List\nTotal: ${PlayerData.deck.length}`,
+      font: new Font({
+        family: "Kaph",
+        size: 16,
+        color: colorLabel,
+        lineHeight: 18,
+        textAlign: TextAlign.Center,
+      }),
+    });
+
     const invite1 = new GuestInviteCard({
-      pos: vec(85, 150),
+      pos: vec(70, 150),
       GuestType: GuestSimpleBuzz,
       buzzCost: 1,
     });
 
     const invite2 = new GuestInviteCard({
-      pos: vec(210, 150),
+      pos: vec(212, 150),
       GuestType: GuestSimpleCash,
       buzzCost: 1,
     });
 
     const invite3 = new GuestInviteCard({
-      pos: vec(335, 150),
+      pos: vec(354, 150),
       GuestType: GuestMidBuzz,
       buzzCost: 2,
       max: 3,
     });
 
     const invite4 = new GuestInviteCard({
-      pos: vec(460, 150),
+      pos: vec(496, 150),
       GuestType: GuestFreeBuzz,
       buzzCost: 3,
     });
 
     const invite5 = new GuestInviteCard({
-      pos: vec(585, 150),
+      pos: vec(638, 150),
       GuestType: GuestMidCashForBuzz,
       buzzCost: 3,
       max: 3,
     });
 
     const invite6 = new GuestInviteCard({
-      pos: vec(710, 150),
+      pos: vec(780, 150),
       GuestType: GuestSimpleWatch,
       buzzCost: 4,
       max: 3,
     });
 
     const invite7 = new GuestInviteCard({
-      pos: vec(85, 300),
+      pos: vec(70, 325),
       GuestType: GuestMidUpgrade,
       buzzCost: 5,
       max: 3,
     });
 
     const invite8 = new GuestInviteCard({
-      pos: vec(210, 300),
+      pos: vec(212, 325),
       GuestType: GuestHardBuzz,
       buzzCost: 6,
       max: 2,
     });
 
     const invite9 = new GuestInviteCard({
-      pos: vec(336, 300),
+      pos: vec(354, 325),
       GuestType: GuestHardBuzzCash,
       buzzCost: 6,
       max: 2,
     });
 
     const invite10 = new GuestInviteCard({
-      pos: vec(460, 300),
+      pos: vec(496, 325),
       GuestType: GuestAutoFulfill,
       buzzCost: 7,
       max: 2,
     });
 
     const invite11 = new GuestInviteCard({
-      pos: vec(585, 300),
+      pos: vec(638, 325),
       GuestType: GuestSimpleCashPlus,
       buzzCost: 7,
       max: 3,
     });
 
     const invite12 = new GuestInviteCard({
-      pos: vec(710, 300),
+      pos: vec(780, 325),
       GuestType: GuestRemove,
       buzzCost: 8,
       max: 2,
     });
 
     const invite13 = new GuestInviteCard({
-      pos: vec(85, 450),
+      pos: vec(70, 500),
       GuestType: GuestHardStar,
       buzzCost: 20,
       max: 1,
     });
 
     const upgrade1 = new StoveUpgradeCard({
-      pos: vec(460, 450),
+      pos: vec(350, 500),
       cashCost: PlayerData.cookingLevel + 1,
     });
 
     const upgrade2 = new KnifeUpgradeCard({
-      pos: vec(585, 450),
+      pos: vec(500, 500),
       cashCost: PlayerData.choppingLevel + 2,
     });
 
-    const deckSizeLabel = new Label({
-      pos: vec(665, 390),
-      anchor: Vector.Half,
-      text: `Total: ${PlayerData.deck.length}`,
-      font: new Font({ size: 24 }),
-    });
     const button = new OpenKitchenButton();
 
     this.add(buzzCounter);

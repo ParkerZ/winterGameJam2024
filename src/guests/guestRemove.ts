@@ -15,6 +15,7 @@ export class GuestRemove extends Guest {
         difficulty: DifficultyOptions.None,
       },
       sprite: Resources.Guest12.toSprite(),
+      icon: Resources.IconCancel.toSprite(),
     });
 
     this.reward = new Reward({});

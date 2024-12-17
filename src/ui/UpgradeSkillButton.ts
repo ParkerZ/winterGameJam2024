@@ -1,4 +1,4 @@
-import { Resources } from "@/resources";
+import { Resources, colorPrimaryCash } from "@/resources";
 import {
   Engine,
   Font,
@@ -21,16 +21,20 @@ export class UpgradeSkillButton extends ScreenElement {
 
     this.price = 0;
     this.label = new Label({
-      pos: vec(45, -15),
+      pos: vec(0, -15),
       text: "",
-      font: new Font({ size: 36, textAlign: TextAlign.Right }),
+      font: new Font({
+        family: "Kaph",
+        size: 36,
+        textAlign: TextAlign.Center,
+        color: colorPrimaryCash,
+      }),
       anchor: Vector.Half,
     });
   }
 
   onInitialize(engine: Engine<any>): void {
     const sprite = Resources.ButtonInvite.toSprite();
-    sprite.scale = vec(0.5, 0.5);
     this.graphics.use(sprite);
   }
 
@@ -40,7 +44,7 @@ export class UpgradeSkillButton extends ScreenElement {
       this.removeChild(this.label);
     }
 
-    this.label.text = `$${this.price}`;
+    this.label.text = `${this.price}`;
 
     this.addChild(this.label);
   }

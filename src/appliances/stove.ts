@@ -30,6 +30,7 @@ export class Stove extends Appliance {
     this.heldItem = incomingItem;
     this.heldItem.unparent();
     this.addChild(this.heldItem);
+    this.heldItem.pos = vec(-3, -50);
     this.heldItem.setState("cooking");
     this.heldItem.events.on("cooked", () => {
       this.handleMinceCookedEvent();
@@ -55,5 +56,6 @@ export class Stove extends Appliance {
     this.heldItem.kill();
     this.heldItem = new Patty();
     this.addChild(this.heldItem);
+    this.heldItem.pos = vec(-3, -50);
   }
 }

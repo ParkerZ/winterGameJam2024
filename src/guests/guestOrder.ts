@@ -1,7 +1,7 @@
 import { Actor, Engine, ScreenElement, Vector, vec } from "excalibur";
 import { Resources } from "../resources";
 import { Burger } from "../foodStuffs/burger";
-import { GuestEventEmitter } from "../events";
+import { GuestEventEmitter, OrderInteractEvent } from "../events";
 
 export type Difficulty = "easy" | "medium" | "hard" | "na";
 
@@ -20,7 +20,7 @@ export class GuestOrder extends ScreenElement {
 
   constructor(eventEmitter: GuestEventEmitter, difficulty: Difficulty) {
     super({
-      pos: vec(600, 100),
+      pos: vec(0, -90),
       anchor: Vector.Half,
     });
 
@@ -49,11 +49,17 @@ export class GuestOrder extends ScreenElement {
   }
 
   onInitialize(engine: Engine<any>): void {
-    const sprite = Resources.OrderBanner.toSprite();
+    const sprite = Resources.ThoughtBubble.toSprite();
     sprite.scale = vec(0.5, 0.5);
     this.graphics.use(sprite);
     this.addChild(this.burger);
-    this.burger.pos = this.burger.pos.add(vec(0, 20));
+    this.burger.pos = this.burger.pos.add(vec(1, 7));
+
+    this.on("pointerdown", () => {
+      if (this.eventEmitter) {
+        this.eventEmitter.emit("interactOrder", new OrderInteractEvent(this));
+      }
+    });
   }
 
   public doesBurgerMatchOrder(incomingBurger: Burger): boolean {

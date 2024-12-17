@@ -4,8 +4,9 @@ import bunBottom from "./images/bunButtom.png";
 import bunCrate from "./images/bunCrate.png";
 import bunTop from "./images/bunTop.png";
 import burger from "./images/patty.png";
-import buttonInvite from "./images/tempInviteButton.png";
-import buttonNext from "./images/tempNextButton.png";
+import buttonInvite from "./images/buyButton.png";
+import buttonNext from "./images/nextButton.png";
+import buttonNextTemp from "./images/tempNextButton.png";
 import cheese from "./images/cheese.png";
 import cheeseCrate from "./images/cheeseCrate.png";
 import counter1 from "./images/counter1.png";
@@ -27,8 +28,15 @@ import guest10 from "./images/guest10.png";
 import guest11 from "./images/guest11.png";
 import guest12 from "./images/guest12.png";
 import guest13 from "./images/guest13.png";
-import kitchenBackground from "./images/kitchenBackground.png";
-import kitchenBackgroundFull from "./images/kitchenBackgroundFull.png";
+import iconBacking from "./images/iconBacking.png";
+import iconBell from "./images/IconBell.png";
+import iconCancel from "./images/iconCancel.png";
+import iconEasy from "./images/iconEasy.png";
+import iconHard from "./images/iconHard.png";
+import iconMedium from "./images/iconMedium.png";
+import iconUpgrade from "./images/iconUpgrade.png";
+import iconWatch from "./images/iconWatch.png";
+import kitchenBackgroundGradient from "./images/kitchenBgGradient.png";
 import knifeUpgrade from "./images/knifeUpgrade.png";
 import lettuce from "./images/lettuce.png";
 import lettuceCrate from "./images/lettuceCrate.png";
@@ -40,6 +48,8 @@ import sidePanel2 from "./images/tempSidePanel2.png";
 import star from "./images/star.png";
 import stove from "./images/stove.png";
 import stoveUpgrade from "./images/stoveUpgrade.png";
+import thoughtBubble from "./images/thoughtBubble.png";
+import timeLabel from "./images/timeLabel.png";
 import tomato from "./images/tomato.png";
 import tomatoCrate from "./images/tomatoCrate.png";
 import tomatoSlice from "./images/tomatoSlice.png";
@@ -75,7 +85,15 @@ export const Resources = {
   Guest11: new ImageSource(guest11),
   Guest12: new ImageSource(guest12),
   Guest13: new ImageSource(guest13),
-  KitchenBackground: new ImageSource(kitchenBackground),
+  IconBacking: new ImageSource(iconBacking),
+  IconBell: new ImageSource(iconBell),
+  IconCancel: new ImageSource(iconCancel),
+  IconEasy: new ImageSource(iconEasy),
+  iconHard: new ImageSource(iconHard),
+  iconMedium: new ImageSource(iconMedium),
+  IconUpgrade: new ImageSource(iconUpgrade),
+  IconWatch: new ImageSource(iconWatch),
+  KitchenBackground: new ImageSource(kitchenBackgroundGradient),
   KnifeUpgrade: new ImageSource(knifeUpgrade),
   Lettuce: new ImageSource(lettuce),
   LettuceCrate: new ImageSource(lettuceCrate),
@@ -86,6 +104,8 @@ export const Resources = {
   Star: new ImageSource(star),
   Stove: new ImageSource(stove),
   StoveUpgrade: new ImageSource(stoveUpgrade),
+  ThoughtBubble: new ImageSource(thoughtBubble),
+  TimeLabel: new ImageSource(timeLabel),
   Tomato: new ImageSource(tomato),
   TomatoSlice: new ImageSource(tomatoSlice),
   TomatoCrate: new ImageSource(tomatoCrate),
@@ -108,9 +128,10 @@ export const cutoutScale = vec(580 / 1557, 580 / 1557);
 
 export const guestScale = vec(0.425, 0.425);
 
-export const sidePanelScale = vec(200 / 4252, 200 / 4252);
+export const nextButtonScale = vec(0.75, 0.75);
 
 export const colorLabel = new Color(255, 255, 243);
+export const colorAccent = new Color(255, 204, 0);
 export const colorPrimaryBuzz = new Color(247, 157, 108);
 export const colorSecondaryBuzz = new Color(115, 80, 72);
 export const colorPrimaryCash = new Color(107, 242, 193);

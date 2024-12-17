@@ -17,7 +17,7 @@ export class CashCounter extends ScreenElement {
 
   constructor() {
     super({
-      pos: vec(1030, 130),
+      pos: vec(1038, 130),
       z: 2,
     });
 

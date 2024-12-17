@@ -50,7 +50,7 @@ export abstract class Appliance extends ScreenElement {
 
     this.pointer.useGraphicsBounds = true;
 
-    // TODO: this should move to the child in some fashion
+    // TODO: Fix highlights for active element
     this.tempHighlight = new ScreenElement({
       x: this.pos.x,
       y: this.pos.y,

@@ -5,6 +5,7 @@
 - [Kaph Font](https://ggbot.itch.io/kaph-font)
 - [Kitchen Assets](https://kaylousberg.itch.io/restaurant-bits)
 - [Character Assets](https://kenney.nl/assets/mini-characters-1)
+- [Bell Icon Inspiration](https://www.flaticon.com/free-icon/bell_1827312)
 
 ## Get Started
 

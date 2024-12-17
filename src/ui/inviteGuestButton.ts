@@ -1,4 +1,4 @@
-import { Resources } from "@/resources";
+import { Resources, colorPrimaryBuzz } from "@/resources";
 import {
   Engine,
   Font,
@@ -23,14 +23,18 @@ export class InviteGuestButton extends ScreenElement {
 
   onInitialize(engine: Engine<any>): void {
     const sprite = Resources.ButtonInvite.toSprite();
-    sprite.scale = vec(0.5, 0.5);
     this.graphics.use(sprite);
 
     this.addChild(
       new Label({
-        pos: vec(45, -15),
+        pos: vec(0, -15),
         text: `${this.price}`,
-        font: new Font({ size: 36, textAlign: TextAlign.Right }),
+        font: new Font({
+          family: "Kaph",
+          size: 36,
+          textAlign: TextAlign.Center,
+          color: colorPrimaryBuzz,
+        }),
         anchor: Vector.Half,
       })
     );

@@ -1,10 +1,13 @@
 import {
   Actor,
   Engine,
+  Font,
+  Label,
   Resource,
   Scene,
   SceneActivationContext,
   ScreenElement,
+  TextAlign,
   Vector,
   vec,
 } from "excalibur";
@@ -25,12 +28,12 @@ import { BuzzCounter } from "@/ui/buzzCounter";
 import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
 import { LettuceCrate } from "@/appliances/lettuceCrate";
-import { TimeCounter } from "@/ui/timeCounter";
 import { StarCounter } from "@/ui/starCounter";
 import { GuestHardStarOne } from "@/guests/guestHardStarOne";
 import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
 import { GuestHardStarThree } from "@/guests/guestHardStarThree";
-import { Resources, sidePanelScale, spriteScale } from "@/resources";
+import { Resources, colorLabel, spriteScale } from "@/resources";
+import { StatusBar } from "@/ui/statusBar";
 
 const GUEST_SPAWN_TIME_MS = 1000;
 
@@ -48,6 +51,7 @@ export class Kitchen extends Scene {
   protected startTime = 0;
   protected maxTimeMS = 30999;
   protected isDayActive: boolean;
+  protected timeBar: StatusBar;
 
   protected guestSlot: {
     slot1: GuestSlot;
@@ -72,7 +76,6 @@ export class Kitchen extends Scene {
   };
 
   private glove: Glove;
-  private timeCounter: TimeCounter;
 
   override onInitialize(engine: Engine): void {}
 
@@ -86,6 +89,21 @@ export class Kitchen extends Scene {
     Object.keys(this.guestSlot).forEach((key, i) => {
       this.guestSlot[key].readyTime = now + i * GUEST_SPAWN_TIME_MS;
     });
+    this.timeBar = new StatusBar({
+      x: 477,
+      y: 555,
+      z: 2,
+      maxVal: this.maxTimeMS,
+      size: "lg",
+    });
+    // this.timeBar.setPos(vec(477, 555));
+    this.add(this.timeBar);
+
+    const timeLabel = new ScreenElement({ pos: vec(85, 522), z: 5 });
+    const timeLabelSprite = Resources.TimeLabel.toSprite();
+    timeLabelSprite.scale = vec(0.75, 0.75);
+    timeLabel.graphics.use(timeLabelSprite);
+    this.add(timeLabel);
 
     // Create shared event emitter to connect appliance interactions to player
     const applianceEventEmitter = new ApplianceEventEmitter();
@@ -126,7 +144,7 @@ export class Kitchen extends Scene {
       return guest;
     });
 
-    const kitchenBackground = new ScreenElement({ z: -2 });
+    const kitchenBackground = new ScreenElement({ y: -4, z: -2 });
     const bgSprite = Resources.KitchenBackground.toSprite();
     bgSprite.scale = spriteScale;
     kitchenBackground.graphics.use(bgSprite);
@@ -141,10 +159,19 @@ export class Kitchen extends Scene {
     const cashCounter = new CashCounter();
     const dayCounter = new DayCounter();
     const starCounter = new StarCounter();
-    this.timeCounter = new TimeCounter(
-      Math.ceil(this.maxTimeMS / 1000),
-      vec(700, 5)
-    );
+
+    const deckSizeLabel = new Label({
+      pos: vec(960, 337),
+      anchor: Vector.Half,
+      text: `Invite List\nTotal: ${PlayerData.deck.length}`,
+      font: new Font({
+        family: "Kaph",
+        size: 16,
+        color: colorLabel,
+        lineHeight: 18,
+        textAlign: TextAlign.Center,
+      }),
+    });
 
     // Rendered in this order to prevent impossible overlap
     const fridge = new Fridge(applianceEventEmitter, vec(90, 260));
@@ -176,7 +203,7 @@ export class Kitchen extends Scene {
     this.add(cashCounter);
     this.add(dayCounter);
     this.add(starCounter);
-    this.add(this.timeCounter);
+    this.add(deckSizeLabel);
 
     this.add(fridge);
     this.add(trash);
@@ -217,10 +244,7 @@ export class Kitchen extends Scene {
       return;
     }
 
-    const remainingSecondCount = this.timeCounter.getCount();
-    if (now - this.startTime > this.maxTimeMS - remainingSecondCount * 1000) {
-      this.timeCounter.setCount(Math.ceil(remainingSecondCount - 1));
-    }
+    this.timeBar.setCurrVal(this.maxTimeMS - (now - this.startTime));
 
     if (this.queuedGuests.length === 0) {
       return;

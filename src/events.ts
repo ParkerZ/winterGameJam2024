@@ -87,8 +87,15 @@ export class AbilityCancelEvent extends GameEvent<Guest> {
   }
 }
 
+export class OrderInteractEvent extends GameEvent<GuestOrder> {
+  constructor(public order: GuestOrder) {
+    super();
+  }
+}
+
 export type GuestEvents = {
   interact: GuestInteractEvent;
+  interactOrder: OrderInteractEvent;
   clearOrder: ClearOrderEvent;
   autoFulfillActivate: AbilityActivateEvent;
   autoFulfillConfirm: AbilityCompleteEvent;

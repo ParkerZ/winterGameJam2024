@@ -1,22 +1,24 @@
 import { GuestEventEmitter } from "@/events";
-import { Guest } from "./guest";
+import { Guest, TooltipText } from "./guest";
 import { Engine, Font, Label } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
 
-// TODO: figure out growing tooltip
+const updateTooltip: TooltipText = {
+  top: "Permanently\ngains +1 Buzz\nwhen served",
+  buzz: "+2 Buzz",
+  difficulty: DifficultyOptions.Medium,
+};
+
 export class GuestMidUpgrade extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
       label: "Supporter",
-      tooltipText: {
-        top: "Permanently\ngains +1 Buzz\nwhen served",
-        buzz: "+1 Buzz",
-        difficulty: DifficultyOptions.Medium,
-      },
+      tooltipText: updateTooltip,
       sprite: Resources.Guest7.toSprite(),
+      icon: Resources.IconUpgrade.toSprite(),
     });
 
     this.reward = new Reward({ buzz: 2 });
@@ -28,12 +30,6 @@ export class GuestMidUpgrade extends Guest {
     super.cleanup(engine);
 
     this.reward = new Reward({ buzz: this.reward.buzz + 1 });
-  }
-
-  override getIcon(): Label | null {
-    return new Label({
-      text: `+`,
-      font: new Font({ size: 24 }),
-    });
+    this.updateTooltip({ ...updateTooltip, buzz: `+${this.reward.buzz} Buzz` });
   }
 }

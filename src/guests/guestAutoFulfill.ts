@@ -15,6 +15,7 @@ export class GuestAutoFulfill extends Guest {
         difficulty: DifficultyOptions.None,
       },
       sprite: Resources.Guest10.toSprite(),
+      icon: Resources.IconBell.toSprite(),
     });
 
     this.reward = new Reward({});

@@ -1,24 +1,34 @@
 import { GuestEventEmitter } from "@/events";
-import { Guest, GuestStates } from "./guest";
-import { Engine, Font, Label } from "excalibur";
+import { Guest, GuestStates, TooltipText } from "./guest";
+import {
+  Engine,
+  Font,
+  Label,
+  ScreenElement,
+  TextAlign,
+  Vector,
+  vec,
+} from "excalibur";
 import { Reward } from "@/reward";
-import { Resources } from "@/resources";
+import { Resources, colorPrimaryBuzz } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
 import { GuestRemove } from "./guestRemove";
 import { GuestAutoFulfill } from "./guestAutoFulfill";
 
-// TODO: figure out growing tooltip
+const watchTooltip: TooltipText = {
+  top: "Gains +2 Buzz\nper order\nserved while\nwaiting",
+  buzz: "+2 Buzz",
+  difficulty: DifficultyOptions.Easy,
+};
+
 export class GuestSimpleWatch extends Guest {
   constructor({ eventEmitter }: { eventEmitter?: GuestEventEmitter }) {
     super({
       eventEmitter,
       label: "Watcher",
-      tooltipText: {
-        top: "Gains +2 Buzz\nper order\nserved while\nwaiting",
-        buzz: "+2 Buzz",
-        difficulty: DifficultyOptions.Easy,
-      },
+      tooltipText: watchTooltip,
       sprite: Resources.Guest6.toSprite(),
+      icon: Resources.IconWatch.toSprite(),
     });
 
     this.reward = new Reward({ buzz: 2 });
@@ -56,17 +66,29 @@ export class GuestSimpleWatch extends Guest {
       }
 
       this.reward = new Reward({ buzz: this.reward.buzz + 2 });
-    });
-  }
+      this.updateTooltip({
+        ...watchTooltip,
+        buzz: `+${this.reward.buzz} Buzz`,
+      });
 
-  override onInitialize(engine: Engine<any>): void {
-    super.onInitialize(engine);
-  }
+      // Mega hacky overlaid icon
+      const iconBacking = Resources.IconBacking.toSprite();
+      iconBacking.scale = vec(0.55, 0.55);
+      const box = new ScreenElement({ pos: vec(52, -17), anchor: Vector.Half });
+      box.graphics.use(iconBacking);
 
-  override getIcon(): Label | null {
-    return new Label({
-      text: `=`,
-      font: new Font({ size: 24 }),
+      this.addChild(box);
+      const label = new Label({
+        pos: vec(60, -25),
+        text: `${this.reward.buzz}`,
+        font: new Font({
+          family: "Kaph",
+          size: 18,
+          color: colorPrimaryBuzz,
+          textAlign: TextAlign.Right,
+        }),
+      });
+      this.addChild(label);
     });
   }
 }

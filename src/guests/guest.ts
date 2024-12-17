@@ -1,4 +1,15 @@
-import { Engine, Label, ScreenElement, Sprite, Vector, vec } from "excalibur";
+import {
+  Actor,
+  Engine,
+  Font,
+  Label,
+  Rectangle,
+  ScreenElement,
+  Sprite,
+  TextAlign,
+  Vector,
+  vec,
+} from "excalibur";
 import { Difficulty, DifficultyOptions, GuestOrder } from "./guestOrder";
 import { Reward } from "../reward";
 import { Burger } from "@/foodStuffs/burger";
@@ -9,7 +20,13 @@ import {
 } from "@/events";
 import { PlayerData } from "@/playerData";
 import { Tooltip } from "@/ui/tooltip";
-import { guestScale } from "@/resources";
+import {
+  Resources,
+  colorPrimaryBuzz,
+  colorPrimaryCash,
+  colorSecondaryBuzz,
+  guestScale,
+} from "@/resources";
 
 export type GuestState =
   | "dormant"
@@ -26,6 +43,13 @@ export const GuestStates: Record<string, GuestState> = {
   Cleanup: "cleanup",
 };
 
+export interface TooltipText {
+  top?: string;
+  buzz?: string;
+  cash?: string;
+  difficulty?: Difficulty;
+}
+
 export class Guest extends ScreenElement {
   protected eventEmitter: GuestEventEmitter;
 
@@ -37,8 +61,10 @@ export class Guest extends ScreenElement {
 
   protected order: GuestOrder | null;
 
+  protected label: string;
   protected tooltip: Tooltip | null;
   protected isTooltipActive: boolean = false;
+  protected icon: Sprite | null;
 
   public canBeAutoFulfilled: boolean = false;
 
@@ -47,16 +73,13 @@ export class Guest extends ScreenElement {
     label = "",
     tooltipText = {},
     sprite,
+    icon,
   }: {
     eventEmitter?: GuestEventEmitter;
-    tooltipText?: {
-      top?: string;
-      buzz?: string;
-      cash?: string;
-      difficulty?: Difficulty;
-    };
+    tooltipText?: TooltipText;
     label?: string;
     sprite?: Sprite;
+    icon?: Sprite;
   }) {
     super({
       anchor: Vector.Half,
@@ -70,18 +93,15 @@ export class Guest extends ScreenElement {
       this.sprite.scale = guestScale;
     }
 
-    this.tooltip = tooltipText
-      ? new Tooltip({
-          label: label,
-          topText: tooltipText.top,
-          buzzText: tooltipText.buzz,
-          cashText: tooltipText.cash,
-          difficulty: tooltipText.difficulty,
-        })
-      : null;
+    this.icon = icon ?? null;
+
+    this.label = label;
+    if (tooltipText) this.updateTooltip(tooltipText);
   }
 
   onInitialize(engine: Engine<any>): void {
+    this.addIcons();
+
     this.graphics.use(this.sprite);
 
     // It feels like we need to know whenever this is clicked regardless
@@ -126,8 +146,19 @@ export class Guest extends ScreenElement {
     if (this.state === GuestStates.Cleanup) {
       this.cleanup(engine);
       this.state = GuestStates.Dormant;
+      this.removeAllChildren();
       this.kill();
     }
+  }
+
+  public updateTooltip(tooltipText: TooltipText) {
+    this.tooltip = new Tooltip({
+      label: this.label,
+      topText: tooltipText.top,
+      buzzText: tooltipText.buzz,
+      cashText: tooltipText.cash,
+      difficulty: tooltipText.difficulty,
+    });
   }
 
   public attachEventEmitter(eventEmitter: GuestEventEmitter) {
@@ -142,6 +173,7 @@ export class Guest extends ScreenElement {
     }
     this.state = GuestStates.Idle;
     this.hoverState = "idle";
+    this.addIcons();
   }
 
   public getState(): GuestState {
@@ -174,8 +206,14 @@ export class Guest extends ScreenElement {
     this.state = GuestStates.Ordering;
 
     this.order = new GuestOrder(this.eventEmitter, this.difficulty);
-    this.order.pos = vec(0, 0);
     this.addChild(this.order);
+
+    // Make sure to capture clicks on order
+    this.eventEmitter.on("interactOrder", (evt) => {
+      if (evt.order === this.order) {
+        this.eventEmitter.emit("interact", new GuestInteractEvent(this));
+      }
+    });
   }
 
   public doesBurgerMatchOrder(burger: Burger): boolean {
@@ -211,6 +249,93 @@ export class Guest extends ScreenElement {
     if (this.tooltip && this.isTooltipActive) {
       engine.remove(this.tooltip);
       this.isTooltipActive = false;
+    }
+  }
+
+  private addIcons() {
+    const iconBacking = Resources.IconBacking.toSprite();
+    iconBacking.scale = vec(0.55, 0.55);
+
+    // Top Right
+    if (this.reward.star) {
+      const star = new ScreenElement({
+        pos: vec(52, -56),
+        anchor: Vector.Half,
+      });
+      const sprite = Resources.Star.toSprite();
+      sprite.scale = Vector.Half;
+      star.graphics.use(sprite);
+      this.addChild(star);
+    } else if (this.icon) {
+      const icon = new ScreenElement({
+        pos: vec(52, -56),
+        anchor: Vector.Half,
+      });
+      const sprite = this.icon.clone();
+      sprite.scale = Vector.Half;
+      icon.graphics.use(sprite);
+      this.addChild(icon);
+    }
+
+    // Middle Right
+    if (this.reward.buzz) {
+      const box = new ScreenElement({ pos: vec(52, -17), anchor: Vector.Half });
+      box.graphics.use(iconBacking);
+
+      this.addChild(box);
+      const label = new Label({
+        pos: vec(60, -25),
+        text: `${this.reward.buzz}`,
+        font: new Font({
+          family: "Kaph",
+          size: 18,
+          color: colorPrimaryBuzz,
+          textAlign: TextAlign.Right,
+        }),
+      });
+      this.addChild(label);
+    }
+
+    // Bottom Right
+    if (this.reward.cash) {
+      const box = new ScreenElement({ pos: vec(52, 18), anchor: Vector.Half });
+      box.graphics.use(iconBacking);
+
+      this.addChild(box);
+      const label = new Label({
+        pos: vec(60, 10),
+        text: `${this.reward.cash}`,
+        font: new Font({
+          family: "Kaph",
+          size: 18,
+          color: colorPrimaryCash,
+          textAlign: TextAlign.Right,
+        }),
+      });
+      this.addChild(label);
+    }
+
+    // Bottom Left
+    if (this.difficulty !== DifficultyOptions.None) {
+      const icon = new ScreenElement({
+        pos: vec(-52, 18),
+        anchor: Vector.Half,
+      });
+      let sprite;
+      switch (this.difficulty) {
+        case DifficultyOptions.Easy:
+          sprite = Resources.IconEasy.toSprite();
+          break;
+        case DifficultyOptions.Medium:
+          sprite = Resources.iconMedium.toSprite();
+          break;
+        case DifficultyOptions.Hard:
+          sprite = Resources.iconHard.toSprite();
+          break;
+      }
+      sprite.scale = Vector.Half;
+      icon.graphics.use(sprite);
+      this.addChild(icon);
     }
   }
 }
