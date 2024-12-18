@@ -32,28 +32,28 @@ const game = new Engine({
     kitchen: {
       scene: Kitchen,
       transitions: {
-        in: new CrossFade({
-          duration: 500,
-          direction: "in",
-          blockInput: true,
-        }),
+        // in: new CrossFade({
+        //   duration: 500,
+        //   direction: "in",
+        //   blockInput: true,
+        // }),
       },
     },
     shop: {
       scene: Shop,
       transitions: {
-        in: new CrossFade({
-          duration: 500,
-          direction: "in",
-          blockInput: true,
-        }),
+        // in: new CrossFade({
+        //   duration: 500,
+        //   direction: "in",
+        //   blockInput: true,
+        // }),
       },
     },
   },
 });
 
 game
-  .start("kitchen", {
+  .start("shop", {
     loader,
   })
   .then(() => {

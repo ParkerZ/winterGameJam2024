@@ -1,5 +1,5 @@
 import { Engine, Vector, vec } from "excalibur";
-import { Resources, spriteScale } from "../resources";
+import { Resources, sizzleVolume, spriteScale } from "../resources";
 import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
 import { Mince } from "@/foodStuffs/mince";
@@ -27,10 +27,13 @@ export class Stove extends Appliance {
       return false;
     }
 
+    Resources.soundSizzle.play(sizzleVolume);
+
     this.heldItem = incomingItem;
     this.heldItem.unparent();
     this.addChild(this.heldItem);
     this.heldItem.pos = vec(-3, -50);
+    this.heldItem.z = 1;
     this.heldItem.setState("cooking");
     this.heldItem.events.on("cooked", () => {
       this.handleMinceCookedEvent();
@@ -57,5 +60,6 @@ export class Stove extends Appliance {
     this.heldItem = new Patty();
     this.addChild(this.heldItem);
     this.heldItem.pos = vec(-3, -50);
+    this.heldItem.z = 1;
   }
 }

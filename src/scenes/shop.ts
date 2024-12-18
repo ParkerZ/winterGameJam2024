@@ -19,11 +19,13 @@ import {
   Resources,
   colorLabel,
   colorPrimaryBuzz,
+  musicVolume,
   spriteScale,
 } from "@/resources";
 import { BuzzCounter } from "@/ui/buzzCounter";
 import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
+import { DeckCounter } from "@/ui/deckCounter";
 import { OpenKitchenButton } from "@/ui/openKitchenButton";
 import { StarCounter } from "@/ui/starCounter";
 import {
@@ -40,12 +42,16 @@ import {
 } from "excalibur";
 
 export class Shop extends Scene {
-  override onInitialize(engine: Engine): void {}
+  override onInitialize(engine: Engine): void {
+    Resources.musicShop.loop = true;
+  }
 
   override onActivate(context: SceneActivationContext<unknown>): void {
     if (PlayerData.day >= PlayerData.maxDay) {
       alert("Game over");
     }
+
+    Resources.musicShop.play(musicVolume);
 
     // const shopBackground = new ScreenElement({ z: -2 });
     // const bgSprite = Resources.FloorBg.toSprite();
@@ -74,19 +80,7 @@ export class Shop extends Scene {
     const cashCounter = new CashCounter();
     const dayCounter = new DayCounter();
     const starCounter = new StarCounter();
-
-    const deckSizeLabel = new Label({
-      pos: vec(960, 337),
-      anchor: Vector.Half,
-      text: `Invite List\nTotal: ${PlayerData.deck.length}`,
-      font: new Font({
-        family: "Kaph",
-        size: 16,
-        color: colorLabel,
-        lineHeight: 18,
-        textAlign: TextAlign.Center,
-      }),
-    });
+    const deckCounter = new DeckCounter();
 
     const invite1 = new GuestInviteCard({
       pos: vec(70, 150),
@@ -210,13 +204,14 @@ export class Shop extends Scene {
     this.add(upgrade1);
     this.add(upgrade2);
 
-    this.add(deckSizeLabel);
+    this.add(deckCounter);
     this.add(button);
   }
 
   override onDeactivate(context: SceneActivationContext): void {
     // Called when Excalibur transitions away from this scene
     // Only 1 scene is active at a time
+    Resources.musicShop.stop();
     this.clear();
   }
 

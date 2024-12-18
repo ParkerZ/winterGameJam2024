@@ -1,4 +1,10 @@
-import { Resources, colorPrimaryCash, colorSecondaryCash } from "@/resources";
+import {
+  Resources,
+  chopVolume,
+  colorPrimaryCash,
+  colorSecondaryCash,
+  getRandomChopSound,
+} from "@/resources";
 import { Food } from "./food";
 import { Engine, vec } from "excalibur";
 import { PlayerData } from "@/playerData";
@@ -9,6 +15,7 @@ export class Lettuce extends Food {
   private lastChopCheckTime: number;
   private chopBar: StatusBar;
   private isChopBarRendered: boolean = false;
+  private refireChopSoundCounter: number = 0;
 
   constructor() {
     const sprite = Resources.Lettuce.toSprite();
@@ -45,14 +52,31 @@ export class Lettuce extends Food {
         this.lastChopCheckTime = now;
       }
 
-      const elapsedMs = now - this.lastChopCheckTime;
       this.elapsedChopTime += elapsedMs;
       this.chopBar.setCurrVal(this.elapsedChopTime);
       this.lastChopCheckTime = now;
       if (this.elapsedChopTime > PlayerData.choppingTimeThreshold) {
         this.events.emit("chopped");
       }
+
+      if (this.refireChopSoundCounter) {
+        this.refireChopSoundCounter += elapsedMs;
+        if (this.refireChopSoundCounter >= 325) {
+          getRandomChopSound().play(chopVolume);
+          this.refireChopSoundCounter = 0;
+        }
+      }
+
+      if (
+        !Resources.soundChop1.isPlaying() &&
+        !Resources.soundChop2.isPlaying() &&
+        !Resources.soundChop3.isPlaying() &&
+        !this.refireChopSoundCounter
+      ) {
+        this.refireChopSoundCounter = 1;
+      }
     } else {
+      this.refireChopSoundCounter = 0;
       this.lastChopCheckTime = 0;
     }
   }

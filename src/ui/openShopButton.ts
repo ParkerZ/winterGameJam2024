@@ -1,4 +1,9 @@
-import { Resources, nextButtonScale } from "@/resources";
+import {
+  Resources,
+  getRandomClickSound,
+  nextButtonScale,
+  orderVolume,
+} from "@/resources";
 import { Engine, ScreenElement, Vector, vec } from "excalibur";
 
 export class OpenShopButton extends ScreenElement {
@@ -6,6 +11,7 @@ export class OpenShopButton extends ScreenElement {
     super({
       pos: vec(430, 300),
       anchor: Vector.Half,
+      z: 6,
     });
   }
 
@@ -15,7 +21,12 @@ export class OpenShopButton extends ScreenElement {
     this.graphics.use(sprite);
 
     this.on("pointerup", () => {
+      Resources.soundRight.play(orderVolume);
       engine.goToScene("shop");
+    });
+
+    this.on("pointerenter", () => {
+      getRandomClickSound().play();
     });
   }
 }

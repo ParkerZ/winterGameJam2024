@@ -1,4 +1,5 @@
-import { Resources, colorPrimaryBuzz } from "@/resources";
+import { PlayerData } from "@/playerData";
+import { Resources, colorLabel, colorPrimaryBuzz } from "@/resources";
 import {
   Engine,
   Font,
@@ -11,17 +12,32 @@ import {
 
 export class InviteGuestButton extends ScreenElement {
   private price: number;
+  private isDisabled: boolean;
 
-  constructor(price: number, pos: Vector) {
+  constructor(price: number, pos: Vector, isDisabled: boolean) {
     super({
       anchor: Vector.Half,
       pos,
     });
 
     this.price = price;
+    this.isDisabled = isDisabled;
   }
 
   onInitialize(engine: Engine<any>): void {
+    this.updateGraphics();
+  }
+
+  onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
+    if (!this.isDisabled && PlayerData.buzz < this.price) {
+      this.isDisabled = true;
+      this.updateGraphics();
+    }
+  }
+
+  private updateGraphics() {
+    this.removeAllChildren();
+
     const sprite = Resources.ButtonInvite.toSprite();
     this.graphics.use(sprite);
 
@@ -33,7 +49,7 @@ export class InviteGuestButton extends ScreenElement {
           family: "Kaph",
           size: 36,
           textAlign: TextAlign.Center,
-          color: colorPrimaryBuzz,
+          color: this.isDisabled ? colorLabel : colorPrimaryBuzz,
         }),
         anchor: Vector.Half,
       })

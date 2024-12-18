@@ -1,4 +1,10 @@
-import { Resources, colorPrimaryCash } from "@/resources";
+import { PlayerData } from "@/playerData";
+import {
+  Resources,
+  colorLabel,
+  colorPrimaryCash,
+  getRandomClickSound,
+} from "@/resources";
 import {
   Engine,
   Font,
@@ -12,8 +18,9 @@ import {
 export class UpgradeSkillButton extends ScreenElement {
   private price: number;
   private label: Label;
+  private isDisabled: boolean;
 
-  constructor(pos: Vector) {
+  constructor(pos: Vector, isDisabled: boolean) {
     super({
       anchor: Vector.Half,
       pos,
@@ -27,25 +34,43 @@ export class UpgradeSkillButton extends ScreenElement {
         family: "Kaph",
         size: 36,
         textAlign: TextAlign.Center,
-        color: colorPrimaryCash,
+        color: isDisabled ? colorLabel : colorPrimaryCash,
       }),
       anchor: Vector.Half,
     });
+
+    this.isDisabled = isDisabled;
   }
 
   onInitialize(engine: Engine<any>): void {
-    const sprite = Resources.ButtonInvite.toSprite();
-    this.graphics.use(sprite);
+    this.updateGraphics();
+
+    this.on("pointerenter", () => {
+      getRandomClickSound().play();
+    });
+  }
+
+  onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
+    if (this.price !== 0 && !this.isDisabled && PlayerData.cash < this.price) {
+      this.isDisabled = true;
+      this.updateGraphics();
+    }
+  }
+
+  private updateGraphics() {
+    this.removeAllChildren();
+
+    this.graphics.use(Resources.ButtonInvite.toSprite());
+
+    this.label.font.color = this.isDisabled ? colorLabel : colorPrimaryCash;
+
+    this.addChild(this.label);
   }
 
   public setPrice(price: number) {
     this.price = price;
-    if (this.children.length) {
-      this.removeChild(this.label);
-    }
 
     this.label.text = `${this.price}`;
-
-    this.addChild(this.label);
+    this.updateGraphics();
   }
 }

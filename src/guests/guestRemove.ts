@@ -1,5 +1,5 @@
-import { AbilityActivateEvent, GuestEventEmitter } from "@/events";
-import { Guest, GuestStates } from "./guest";
+import { GuestEventEmitter } from "@/events";
+import { Guest } from "./guest";
 import { Font, Label } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
@@ -20,17 +20,8 @@ export class GuestRemove extends Guest {
 
     this.reward = new Reward({});
     this.difficulty = DifficultyOptions.None;
-  }
-
-  override activateAbility(): void {
-    // Emit event so that glove knows to change interactions
-    this.state = GuestStates.Activating;
-    this.eventEmitter.emit("removeActivate", new AbilityActivateEvent());
-    this.eventEmitter.on("removeConfirm", () => {
-      if (this.state === GuestStates.Activating) {
-        this.completeOrder();
-      }
-    });
+    this.eventAbilityActivate = "removeActivate";
+    this.eventAbilityConfirm = "removeConfirm";
   }
 
   override getIcon(): Label | null {

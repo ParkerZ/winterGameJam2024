@@ -32,8 +32,17 @@ import { StarCounter } from "@/ui/starCounter";
 import { GuestHardStarOne } from "@/guests/guestHardStarOne";
 import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
 import { GuestHardStarThree } from "@/guests/guestHardStarThree";
-import { Resources, colorLabel, spriteScale } from "@/resources";
+import {
+  Resources,
+  allGuestsServedVolume,
+  colorLabel,
+  dayEndVolume,
+  musicVolume,
+  spriteScale,
+} from "@/resources";
 import { StatusBar } from "@/ui/statusBar";
+import { DeckCounter } from "@/ui/deckCounter";
+import { GuestHardStar } from "@/guests/guestHardStar";
 
 const GUEST_SPAWN_TIME_MS = 1000;
 
@@ -77,9 +86,13 @@ export class Kitchen extends Scene {
 
   private glove: Glove;
 
-  override onInitialize(engine: Engine): void {}
+  override onInitialize(engine: Engine): void {
+    Resources.musicKitchen.loop = true;
+  }
 
   override onActivate(context: SceneActivationContext<unknown>): void {
+    Resources.musicKitchen.play(musicVolume);
+
     PlayerData.day += 1;
     this.guestCount = PlayerData.deck.length;
     this.numGuestsServed = 0;
@@ -114,26 +127,14 @@ export class Kitchen extends Scene {
     // Create array of orders
     this.allGuests = shuffleArray(PlayerData.deck.slice());
 
-    const firstStarIndex = this.allGuests.findIndex(
-      (g) => g instanceof GuestHardStarOne
-    );
-    const secondStarIndex = this.allGuests.findIndex(
-      (g) => g instanceof GuestHardStarTwo
-    );
-    const thirdStarIndex = this.allGuests.findIndex(
-      (g) => g instanceof GuestHardStarThree
+    const starIndex = this.allGuests.findIndex(
+      (g) => g instanceof GuestHardStar
     );
 
-    // Put star guests somewhere in the first 5
-    if (firstStarIndex > -1) {
-      const guest = this.allGuests.splice(firstStarIndex, 1)[0];
-      this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
-    } else if (secondStarIndex > -1) {
-      const guest = this.allGuests.splice(secondStarIndex, 1)[0];
-      this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
-    } else if (thirdStarIndex > -1) {
-      const guest = this.allGuests.splice(thirdStarIndex, 1)[0];
-      this.allGuests.splice(Math.floor(Math.random() * 5), 0, guest);
+    // Put star guests in the 4th or 5th spot if possible
+    if (starIndex > -1 && this.allGuests.length > 4) {
+      const guest = this.allGuests.splice(starIndex, 1)[0];
+      this.allGuests.splice(3 + Math.floor(Math.random() * 2), 0, guest);
     }
 
     this.allGuests.forEach((g) => g.attachEventEmitter(guestEventEmitter));
@@ -159,19 +160,7 @@ export class Kitchen extends Scene {
     const cashCounter = new CashCounter();
     const dayCounter = new DayCounter();
     const starCounter = new StarCounter();
-
-    const deckSizeLabel = new Label({
-      pos: vec(960, 337),
-      anchor: Vector.Half,
-      text: `Invite List\nTotal: ${PlayerData.deck.length}`,
-      font: new Font({
-        family: "Kaph",
-        size: 16,
-        color: colorLabel,
-        lineHeight: 18,
-        textAlign: TextAlign.Center,
-      }),
-    });
+    const deckCounter = new DeckCounter();
 
     // Rendered in this order to prevent impossible overlap
     const fridge = new Fridge(applianceEventEmitter, vec(90, 260));
@@ -203,7 +192,7 @@ export class Kitchen extends Scene {
     this.add(cashCounter);
     this.add(dayCounter);
     this.add(starCounter);
-    this.add(deckSizeLabel);
+    this.add(deckCounter);
 
     this.add(fridge);
     this.add(trash);
@@ -230,6 +219,7 @@ export class Kitchen extends Scene {
   override onDeactivate(context: SceneActivationContext): void {
     // Called when Excalibur transitions away from this scene
     // Only 1 scene is active at a time
+    Resources.musicKitchen.stop();
     this.clear();
   }
 
@@ -240,6 +230,7 @@ export class Kitchen extends Scene {
 
     const now = Date.now();
     if (now - this.startTime >= this.maxTimeMS) {
+      Resources.soundDayEnd.play(dayEndVolume);
       this.endDay();
       return;
     }
@@ -286,6 +277,7 @@ export class Kitchen extends Scene {
   private enqueueNextGuest(servedGuest: Guest) {
     this.numGuestsServed++;
     if (this.numGuestsServed === this.guestCount) {
+      Resources.soundAllGuestsServed.play(allGuestsServedVolume);
       this.endDay();
       return;
     }

@@ -20,7 +20,7 @@ export class GuestOrder extends ScreenElement {
 
   constructor(eventEmitter: GuestEventEmitter, difficulty: Difficulty) {
     super({
-      pos: vec(0, -90),
+      pos: vec(0, -110),
       anchor: Vector.Half,
     });
 
@@ -50,7 +50,7 @@ export class GuestOrder extends ScreenElement {
 
   onInitialize(engine: Engine<any>): void {
     const sprite = Resources.ThoughtBubble.toSprite();
-    sprite.scale = vec(0.5, 0.5);
+    sprite.scale = vec(0.55, 0.55);
     this.graphics.use(sprite);
     this.addChild(this.burger);
     this.burger.pos = this.burger.pos.add(vec(1, 7));

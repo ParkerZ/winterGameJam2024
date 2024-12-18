@@ -36,6 +36,7 @@ export class Counter extends Appliance {
     this.heldItem.unparent();
     this.addChild(this.heldItem);
     this.heldItem.pos = vec(0, -30);
+    this.heldItem.z = 1;
     this.heldItem.events.on("chopped", () => {
       this.handleChopEvent();
     });
@@ -60,12 +61,14 @@ export class Counter extends Appliance {
       this.heldItem = new TomatoSlice();
       this.addChild(this.heldItem);
       this.heldItem.pos = vec(0, -30);
+      this.heldItem.z = 1;
     } else if (this.heldItem instanceof Lettuce) {
       this.heldItem.unparent();
       this.heldItem.kill();
       this.heldItem = new LettuceSlice();
       this.addChild(this.heldItem);
       this.heldItem.pos = vec(0, -30);
+      this.heldItem.z = 1;
     }
   }
 }

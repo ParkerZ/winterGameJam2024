@@ -5,8 +5,8 @@ import { GuestSimpleBuzz } from "./guests/guestSimpleBuzz";
 import { GuestSimpleCash } from "./guests/guestSimpleCash";
 
 export class PlayerData {
-  public static buzz: number = 0;
-  public static cash: number = 0;
+  public static buzz: number = 10;
+  public static cash: number = 10;
   public static star: number = 0;
   public static day: number = 0;
   public static maxDay: number = 14;

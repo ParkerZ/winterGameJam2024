@@ -14,22 +14,32 @@ import { Difficulty, DifficultyOptions, GuestOrder } from "./guestOrder";
 import { Reward } from "../reward";
 import { Burger } from "@/foodStuffs/burger";
 import {
+  AbilityActivateEvent,
+  AbilityCancelEvent,
   ClearOrderEvent,
   GuestEventEmitter,
+  GuestEvents,
   GuestInteractEvent,
 } from "@/events";
 import { PlayerData } from "@/playerData";
 import { Tooltip } from "@/ui/tooltip";
 import {
   Resources,
+  activateVolume,
+  cancelVolume,
   colorPrimaryBuzz,
   colorPrimaryCash,
   colorSecondaryBuzz,
+  getRandomClickSound,
+  grabVolume,
   guestScale,
+  orderVolume,
 } from "@/resources";
+import { easeOutBack } from "@/animations";
 
 export type GuestState =
   | "dormant"
+  | "animating"
   | "idle"
   | "ordering"
   | "activating"
@@ -37,6 +47,7 @@ export type GuestState =
 
 export const GuestStates: Record<string, GuestState> = {
   Dormant: "dormant",
+  Animating: "animating",
   Idle: "idle",
   Ordering: "ordering",
   Activating: "activating",
@@ -52,6 +63,8 @@ export interface TooltipText {
 
 export class Guest extends ScreenElement {
   protected eventEmitter: GuestEventEmitter;
+  protected eventAbilityActivate?: keyof GuestEvents;
+  protected eventAbilityConfirm?: keyof GuestEvents;
 
   protected reward: Reward;
   protected difficulty: Difficulty;
@@ -65,6 +78,11 @@ export class Guest extends ScreenElement {
   protected tooltip: Tooltip | null;
   protected isTooltipActive: boolean = false;
   protected icon: Sprite | null;
+
+  protected posAtEnter: Vector;
+  protected enterStartTimeMs: number;
+  protected enterElapsedTimeMs: number;
+  protected enterTotalTimeMs: number = 400;
 
   public canBeAutoFulfilled: boolean = false;
 
@@ -114,7 +132,9 @@ export class Guest extends ScreenElement {
     });
 
     this.on("pointerenter", () => {
-      this.hoverState = "hovered";
+      if (this.hoverState !== "end-hover") {
+        getRandomClickSound().play();
+      }
     });
 
     this.on("pointerleave", () => {
@@ -140,6 +160,22 @@ export class Guest extends ScreenElement {
         this.isTooltipActive = false;
       }
     }
+
+    // Handle animating
+    if (this.state === GuestStates.Animating) {
+      this.enterElapsedTimeMs += elapsedMs;
+      const t =
+        1 -
+        (this.enterTotalTimeMs - this.enterElapsedTimeMs) /
+          this.enterTotalTimeMs;
+
+      if (t >= 1) {
+        this.state = GuestStates.Idle;
+      }
+
+      const val = easeOutBack(t);
+      this.pos.y = this.posAtEnter.y + 150 - 150 * val;
+    }
   }
 
   onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
@@ -163,6 +199,48 @@ export class Guest extends ScreenElement {
 
   public attachEventEmitter(eventEmitter: GuestEventEmitter) {
     this.eventEmitter = eventEmitter;
+
+    const arrowIndicator = new ScreenElement({
+      z: 2,
+      y: -45,
+      anchor: Vector.Half,
+    });
+    arrowIndicator.graphics.use(
+      Resources.ArrowDown.toSprite({ scale: vec(0.6, 0.6) })
+    );
+
+    this.eventEmitter.on("removeActivate", () => {
+      // add icon
+      this.addChild(arrowIndicator);
+    });
+
+    this.eventEmitter.on("autoFulfillActivate", () => {
+      // conditionally add icon
+      if (this.canBeAutoFulfilled) {
+        this.addChild(arrowIndicator);
+      }
+    });
+
+    this.eventEmitter.on("removeConfirm", () => {
+      // remove icon
+      if (this.children.includes(arrowIndicator)) {
+        this.removeChild(arrowIndicator);
+      }
+    });
+
+    this.eventEmitter.on("autoFulfillConfirm", () => {
+      // remove icon
+      if (this.children.includes(arrowIndicator)) {
+        this.removeChild(arrowIndicator);
+      }
+    });
+
+    this.eventEmitter.on("abilityCancel", () => {
+      // remove icon
+      if (this.children.includes(arrowIndicator)) {
+        this.removeChild(arrowIndicator);
+      }
+    });
   }
 
   public onAddToScene() {
@@ -171,7 +249,10 @@ export class Guest extends ScreenElement {
       this.order.kill();
       this.order = null;
     }
-    this.state = GuestStates.Idle;
+    this.state = GuestStates.Animating;
+    this.posAtEnter = this.pos.clone();
+    this.enterStartTimeMs = Date.now();
+    this.enterElapsedTimeMs = 0;
     this.hoverState = "idle";
     this.addIcons();
   }
@@ -203,6 +284,8 @@ export class Guest extends ScreenElement {
       return;
     }
 
+    Resources.soundGrab.play(grabVolume);
+
     this.state = GuestStates.Ordering;
 
     this.order = new GuestOrder(this.eventEmitter, this.difficulty);
@@ -222,6 +305,7 @@ export class Guest extends ScreenElement {
 
   public completeOrder() {
     this.eventEmitter.emit("clearOrder", new ClearOrderEvent(this));
+    Resources.soundRight.play(orderVolume);
     this.reward.distribute();
     if (this.order) {
       this.removeChild(this.order);
@@ -241,8 +325,47 @@ export class Guest extends ScreenElement {
     this.state = GuestStates.Cleanup;
   }
 
-  // Use this for any effects when guest has no associated order
-  protected activateAbility() {}
+  protected activateAbility() {
+    if (!this.eventAbilityActivate) {
+      return;
+    }
+
+    Resources.soundActivate.play(activateVolume);
+
+    // Emit event so that glove knows to change interactions
+    this.state = GuestStates.Activating;
+    this.eventEmitter.emit(
+      this.eventAbilityActivate,
+      new AbilityActivateEvent()
+    );
+
+    const cancelButton = new ScreenElement({
+      anchor: Vector.Half,
+      z: 2,
+      y: -100,
+    });
+    const cancelSprite = Resources.CancelButton.toSprite();
+    cancelSprite.scale = vec(0.75, 0.75);
+    cancelButton.graphics.use(cancelSprite);
+    this.addChild(cancelButton);
+    cancelButton.on("pointerup", () => {
+      Resources.soundCancel.play(cancelVolume);
+      this.removeChild(cancelButton);
+      this.eventEmitter.emit("abilityCancel", new AbilityCancelEvent());
+      this.state = GuestStates.Idle;
+    });
+    cancelButton.on("pointerenter", () => {
+      getRandomClickSound().play();
+    });
+
+    if (this.eventAbilityConfirm) {
+      this.eventEmitter.on(this.eventAbilityConfirm, () => {
+        if (this.state === GuestStates.Activating) {
+          this.completeOrder();
+        }
+      });
+    }
+  }
 
   // Use this for any effects after order completion
   protected cleanup(engine: Engine<any>) {

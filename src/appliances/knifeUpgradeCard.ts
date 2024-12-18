@@ -9,7 +9,7 @@ import {
   vec,
 } from "excalibur";
 import { PlayerData } from "@/playerData";
-import { Resources, colorLabel, spriteScale } from "@/resources";
+import { Resources, colorLabel, orderVolume, spriteScale } from "@/resources";
 import { UpgradeSkillButton } from "@/ui/UpgradeSkillButton";
 import { Tooltip } from "@/ui/tooltip";
 
@@ -59,27 +59,27 @@ export class KnifeUpgradeCard extends ScreenElement {
 
     this.addChild(count);
 
-    if (this.max > PlayerData.choppingLevel) {
-      const button = new UpgradeSkillButton(vec(0, 50));
-      button.setPrice(this.cashCost);
-      this.addChild(button);
+    const getIsDisabled = () =>
+      this.max === PlayerData.choppingLevel || this.cashCost > PlayerData.cash;
 
-      button.on("pointerup", (evt) => {
-        if (this.cashCost <= PlayerData.cash) {
-          PlayerData.cash -= this.cashCost;
-          PlayerData.upgradeChoppingTimeThreshold();
-          this.cashCost += 1;
-          button.setPrice(this.cashCost);
+    const button = new UpgradeSkillButton(vec(0, 50), getIsDisabled());
+    button.setPrice(this.cashCost);
+    this.addChild(button);
 
-          count.text = this.getCountText();
+    button.on("pointerup", (evt) => {
+      if (!getIsDisabled()) {
+        Resources.soundRight.play(orderVolume);
+        PlayerData.cash -= this.cashCost;
+        PlayerData.upgradeChoppingTimeThreshold();
+        this.cashCost += 1;
+        button.setPrice(this.cashCost);
 
-          if (this.max <= PlayerData.choppingLevel) {
-            this.removeChild(button);
-            button.kill();
-          }
-        }
-      });
-    }
+        count.text = this.getCountText();
+      } else {
+        Resources.soundWrong.play(orderVolume);
+      }
+    });
+
     this.on("pointerenter", () => {
       this.hoverState = "hovered";
     });

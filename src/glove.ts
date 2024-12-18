@@ -1,5 +1,12 @@
 import { Engine, Scene, ScreenElement, Vector, vec } from "excalibur";
-import { Resources } from "./resources";
+import {
+  Resources,
+  chopVolume,
+  getRandomChopSound,
+  getRandomClickSound,
+  grabVolume,
+  orderVolume,
+} from "./resources";
 import { Fridge } from "./appliances/fridge";
 import {
   AbilityCompleteEvent,
@@ -41,7 +48,7 @@ export class Glove extends ScreenElement {
   ) {
     super({
       name: "Glove",
-      z: 2,
+      z: 50,
       anchor: Vector.Half,
     });
 
@@ -53,7 +60,6 @@ export class Glove extends ScreenElement {
     this.guestInteractionOverride = GuestInteractionOverrides.None;
   }
 
-  // TODO: update temp glove
   onInitialize(engine: Engine<any>): void {
     this.activeAppliances = [];
     const sprite = Resources.Glove.toSprite();
@@ -156,8 +162,10 @@ export class Glove extends ScreenElement {
       this.giveHeldItemToAppliance(appliance);
     } else if (!this.heldItem && otherItem) {
       this.heldItem = otherItem;
+      this.heldItem.z = -1;
       this.addChild(this.heldItem);
       this.heldItem.pos = vec(-25, -25);
+      Resources.soundGrab.play(grabVolume);
     } else if (this.heldItem && otherItem) {
       // If both have an item, determine which goes where
       // First, drop and return food if holding the same food as a food spawn appliance
@@ -223,6 +231,7 @@ export class Glove extends ScreenElement {
   }
 
   private holdBurger(burger: Burger) {
+    Resources.soundGrab.play(grabVolume);
     this.removeChild(this.heldItem);
     this.heldItem = burger;
     this.addChild(this.heldItem);
@@ -257,6 +266,7 @@ export class Glove extends ScreenElement {
     const otherItem = appliance.getHeldItem();
     if (!this.heldItem && otherItem && otherItem.allowsInteraction) {
       otherItem.setState("chopping");
+      getRandomChopSound().play(chopVolume);
     }
 
     // Make sure to give the appliance its item back
@@ -295,14 +305,15 @@ export class Glove extends ScreenElement {
 
     // Auto fulfill orders in this mode, no item will be held in this mode
     if (
-      this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill &&
-      guest.canBeAutoFulfilled
+      this.guestInteractionOverride === GuestInteractionOverrides.AutoFulfill
     ) {
-      guest.completeOrder();
-      this.guestEventEmitter.emit(
-        "autoFulfillConfirm",
-        new AbilityCompleteEvent(guest)
-      );
+      if (guest.canBeAutoFulfilled) {
+        guest.completeOrder();
+        this.guestEventEmitter.emit(
+          "autoFulfillConfirm",
+          new AbilityCompleteEvent(guest)
+        );
+      }
 
       return;
     }
@@ -340,6 +351,7 @@ export class Glove extends ScreenElement {
 
     // Must be holding a burger to fulfill
     if (!this.heldItem || !(this.heldItem instanceof Burger)) {
+      Resources.soundWrong.play(orderVolume);
       return;
     }
 
@@ -348,6 +360,8 @@ export class Glove extends ScreenElement {
       this.removeChild(this.heldItem);
       this.heldItem = null;
       guest.completeOrder();
+    } else {
+      Resources.soundWrong.play(orderVolume);
     }
   }
 

@@ -17,6 +17,7 @@ import {
   colorLabel,
   colorPrimaryBuzz,
   colorPrimaryCash,
+  orderVolume,
 } from "@/resources";
 
 export class GuestInviteCard extends ScreenElement {
@@ -64,27 +65,30 @@ export class GuestInviteCard extends ScreenElement {
 
     this.addChild(count);
 
-    if (
-      this.max > PlayerData.getCountOfGuestType(this.GuestType) &&
-      !this.isDisabled
-    ) {
-      const button = new InviteGuestButton(this.buzzCost, vec(0, 60));
-      this.addChild(button);
+    const getIsDisabled = () =>
+      PlayerData.getCountOfGuestType(this.GuestType) >= this.max ||
+      this.isDisabled ||
+      this.buzzCost > PlayerData.buzz;
 
-      button.on("pointerup", (evt) => {
-        if (this.buzzCost <= PlayerData.buzz) {
-          PlayerData.buzz -= this.buzzCost;
-          PlayerData.deck.push(new this.GuestType({}));
+    const button = new InviteGuestButton(
+      this.buzzCost,
+      vec(0, 60),
+      getIsDisabled()
+    );
+    this.addChild(button);
 
-          count.text = this.getCountText();
+    button.on("pointerup", (evt) => {
+      if (!getIsDisabled()) {
+        Resources.soundRight.play(orderVolume);
+        PlayerData.buzz -= this.buzzCost;
+        PlayerData.deck.push(new this.GuestType({}));
 
-          if (this.max <= PlayerData.getCountOfGuestType(this.GuestType)) {
-            this.removeChild(button);
-            button.kill();
-          }
-        }
-      });
-    }
+        count.text = this.getCountText();
+      } else {
+        Resources.soundWrong.play(orderVolume);
+      }
+    });
+    // }
   }
 
   private getCountText(): string {

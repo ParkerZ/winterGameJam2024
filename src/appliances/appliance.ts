@@ -1,6 +1,6 @@
 import { ApplianceEventEmitter, ExchangeEvent, InteractEvent } from "@/events";
 import { Food } from "@/foodStuffs/food";
-import { spriteScale } from "@/resources";
+import { Resources, getRandomClickSound, spriteScale } from "@/resources";
 import {
   Actor,
   Buttons,
@@ -20,6 +20,7 @@ export abstract class Appliance extends ScreenElement {
   protected state: "idle" | "hovered" | "end-hover";
   protected allowsInteraction: boolean = false;
   protected heldItem: Food | null;
+  protected isActiveAppliance: boolean = false;
 
   protected eventEmitter: ApplianceEventEmitter;
 
@@ -102,9 +103,12 @@ export abstract class Appliance extends ScreenElement {
   }
 
   public setActive(active: boolean, engine: Engine<any>) {
-    if (active) {
+    if (active && !this.isActiveAppliance) {
+      this.isActiveAppliance = true;
       engine.add(this.tempHighlight);
-    } else {
+      getRandomClickSound().play();
+    } else if (!active) {
+      this.isActiveAppliance = false;
       engine.remove(this.tempHighlight);
     }
   }

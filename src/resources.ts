@@ -1,4 +1,5 @@
-import { Color, ImageSource, Loader, vec } from "excalibur";
+import { Color, ImageSource, Loader, Sound, vec } from "excalibur";
+import arrowDown from "./images/arrowDown.png";
 import bun from "./images/bun.png";
 import bunBottom from "./images/bunButtom.png";
 import bunCrate from "./images/bunCrate.png";
@@ -7,6 +8,7 @@ import burger from "./images/patty.png";
 import buttonInvite from "./images/buyButton.png";
 import buttonNext from "./images/nextButton.png";
 import buttonNextTemp from "./images/tempNextButton.png";
+import cancelButton from "./images/cancelButton.png";
 import cheese from "./images/cheese.png";
 import cheeseCrate from "./images/cheeseCrate.png";
 import counter1 from "./images/counter1.png";
@@ -14,7 +16,7 @@ import counter2 from "./images/counter2.png";
 import counter3 from "./images/counter3.png";
 import floorBg from "./images/floorBg.png";
 import fridge from "./images/fridge.png";
-import glove from "./images/tempGlove.png";
+import glove from "./images/glove.png";
 import guest1 from "./images/guest1.png";
 import guest2 from "./images/guest2.png";
 import guest3 from "./images/guest3.png";
@@ -56,7 +58,25 @@ import tomatoSlice from "./images/tomatoSlice.png";
 import tooltip from "./images/tooltip.png";
 import trash from "./images/trash.png";
 
+import kitchenMusic from "./sounds/kitchenMusic.wav";
+import shopMusic from "./sounds/shopMusic.wav";
+import click1 from "./sounds/click1.wav";
+import click2 from "./sounds/click2.wav";
+import click3 from "./sounds/click3.wav";
+import sizzle from "./sounds/sizzle.wav";
+import chop1 from "./sounds/chop1.wav";
+import chop2 from "./sounds/chop2.wav";
+import chop3 from "./sounds/chop3.wav";
+import grab from "./sounds/grab.wav";
+import right from "./sounds/right.wav";
+import wrong from "./sounds/wrong.wav";
+import cancel from "./sounds/cancel.wav";
+import activate from "./sounds/activate.wav";
+import timesUp from "./sounds/timesUp.wav";
+import allClear from "./sounds/allClear.wav";
+
 export const Resources = {
+  ArrowDown: new ImageSource(arrowDown),
   Bun: new ImageSource(bun),
   BunBottom: new ImageSource(bunBottom),
   BunCrate: new ImageSource(bunCrate),
@@ -64,6 +84,7 @@ export const Resources = {
   Burger: new ImageSource(burger),
   ButtonInvite: new ImageSource(buttonInvite),
   ButtonNext: new ImageSource(buttonNext),
+  CancelButton: new ImageSource(cancelButton),
   Cheese: new ImageSource(cheese),
   CheeseCrate: new ImageSource(cheeseCrate),
   Counter1: new ImageSource(counter1),
@@ -111,6 +132,22 @@ export const Resources = {
   TomatoCrate: new ImageSource(tomatoCrate),
   Tooltip: new ImageSource(tooltip),
   Trash: new ImageSource(trash),
+  musicShop: new Sound(shopMusic),
+  musicKitchen: new Sound(kitchenMusic),
+  soundClick1: new Sound(click1),
+  soundClick2: new Sound(click2),
+  soundClick3: new Sound(click3),
+  soundSizzle: new Sound(sizzle),
+  soundChop1: new Sound(chop1),
+  soundChop2: new Sound(chop2),
+  soundChop3: new Sound(chop3),
+  soundGrab: new Sound(grab),
+  soundRight: new Sound(right),
+  soundWrong: new Sound(wrong),
+  soundCancel: new Sound(cancel),
+  soundActivate: new Sound(activate),
+  soundDayEnd: new Sound(timesUp),
+  soundAllGuestsServed: new Sound(allClear),
 } as const;
 
 // We build a loader and add all of our resources to the boot loader
@@ -119,6 +156,26 @@ export const loader = new Loader();
 for (const res of Object.values(Resources)) {
   loader.addResource(res);
 }
+
+export const musicVolume = 0.25;
+export const chopVolume = 0.5;
+export const sizzleVolume = 0.6;
+export const grabVolume = 0.5;
+export const orderVolume = 0.7;
+export const cancelVolume = 1;
+export const activateVolume = 0.8;
+export const dayEndVolume = 0.3;
+export const allGuestsServedVolume = 1;
+
+export const getRandomClickSound = () =>
+  [Resources.soundClick1, Resources.soundClick2, Resources.soundClick3][
+    Math.floor(Math.random() * 3)
+  ];
+
+export const getRandomChopSound = () =>
+  [Resources.soundChop1, Resources.soundChop2, Resources.soundChop3][
+    Math.floor(Math.random() * 3)
+  ];
 
 // Based off aspect ratio scale in game vs saved image
 export const spriteScale = vec(600 / 1557, 600 / 1557);

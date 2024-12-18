@@ -1,6 +1,5 @@
 import { GuestEventEmitter } from "@/events";
 import { Guest } from "./guest";
-import { Font, Label } from "excalibur";
 import { Reward } from "@/reward";
 import { Resources } from "@/resources";
 import { DifficultyOptions } from "./guestOrder";
@@ -25,12 +24,5 @@ export class GuestFreeBuzz extends Guest {
 
   override activateAbility(): void {
     this.completeOrder();
-  }
-
-  override getIcon(): Label | null {
-    return new Label({
-      text: `:)`,
-      font: new Font({ size: 24 }),
-    });
   }
 }
