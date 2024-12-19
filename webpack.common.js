@@ -61,7 +61,7 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebPackPlugin({
-      title: "Temp Cooking Title",
+      title: "Burger Buddies",
       template: "index.html",
       inject: "body",
       favicon: "favicon.png",
