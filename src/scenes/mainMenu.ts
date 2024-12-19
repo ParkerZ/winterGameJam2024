@@ -66,10 +66,20 @@ export class MainMenu extends Scene {
     const guestImage2 = shuffleArray(guestImages)[0].toSprite({
       scale: vec(0.6, 0.6),
     });
-    const guest1 = new ScreenElement({ pos: vec(500, 280) });
-    const guest2 = new ScreenElement({ pos: vec(750, 280) });
+    const guest1 = new ScreenElement({ pos: vec(500, 350) });
+    const guest2 = new ScreenElement({ pos: vec(750, 350) });
+
     guest1.graphics.use(guestImage1);
     guest2.graphics.use(guestImage2);
+
+    const hat1 = new ScreenElement({ pos: vec(548, 270) });
+    const hat2 = new ScreenElement({ pos: vec(795, 270) });
+
+    hat1.graphics.use(Resources.Hat.toSprite({ scale: vec(0.7, 0.7) }));
+    hat2.graphics.use(Resources.Hat.toSprite({ scale: vec(0.7, 0.7) }));
+
+    const dave = new ScreenElement({ pos: vec(870, 250) });
+    dave.graphics.use(Resources.Dave.toSprite({ scale: Vector.Half }));
 
     const difficulties = [
       DifficultyOptions.Easy,
@@ -95,7 +105,7 @@ export class MainMenu extends Scene {
       ingredients.add("TomatoSlice");
     }
     const burger = new Burger(ingredients);
-    burger.pos = vec(732, 420);
+    burger.pos = vec(732, 500);
 
     const hasCompletedTutorial = localStorage.getItem(
       HAS_COMPLETED_TUTORIAL_KEY
@@ -120,6 +130,9 @@ export class MainMenu extends Scene {
     this.add(guest1);
     this.add(burger);
     this.add(guest2);
+    this.add(hat1);
+    this.add(hat2);
+    this.add(dave);
     if (hasCompletedTutorial) {
       this.add(tutorialButton);
     }

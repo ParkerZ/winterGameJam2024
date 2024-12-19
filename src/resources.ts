@@ -73,6 +73,8 @@ import step9 from "./images/step9.png";
 import parallax from "./images/parallax.png";
 import parallax2 from "./images/parallax2.png";
 import dayCompleteModal from "./images/dayCompleteModal.png";
+import hat from "./images/hat.png";
+import dave from "./images/dave.png";
 
 import kitchenMusic from "./sounds/kitchenMusic.wav";
 import shopMusic from "./sounds/shopMusic.wav";
@@ -166,6 +168,8 @@ export const Resources = {
   Parallax: new ImageSource(parallax),
   Parallax2: new ImageSource(parallax2),
   DayCompleteModal: new ImageSource(dayCompleteModal),
+  Hat: new ImageSource(hat),
+  Dave: new ImageSource(dave),
 
   musicShop: new Sound(shopMusic),
   musicKitchen: new Sound(kitchenMusic),
