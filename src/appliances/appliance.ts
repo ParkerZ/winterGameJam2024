@@ -1,6 +1,7 @@
 import { ApplianceEventEmitter, ExchangeEvent, InteractEvent } from "@/events";
 import { Food } from "@/foodStuffs/food";
 import { Resources, getRandomClickSound, spriteScale } from "@/resources";
+import { HighlightArrow } from "@/ui/highlightArrow";
 import {
   Actor,
   Buttons,
@@ -16,7 +17,7 @@ import {
 export abstract class Appliance extends ScreenElement {
   protected sprite: Sprite;
 
-  protected tempHighlight: Actor;
+  protected activeIndicator: Actor;
   protected state: "idle" | "hovered" | "end-hover";
   protected allowsInteraction: boolean = false;
   protected heldItem: Food | null;
@@ -51,15 +52,7 @@ export abstract class Appliance extends ScreenElement {
 
     this.pointer.useGraphicsBounds = true;
 
-    // TODO: Fix highlights for active element
-    this.tempHighlight = new ScreenElement({
-      x: this.pos.x,
-      y: this.pos.y,
-      width: 50,
-      height: 50,
-      color: Color.Green,
-      anchor: Vector.Half,
-    });
+    this.activeIndicator = new HighlightArrow({ pos: vec(-15, -120), z: 7 });
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -80,12 +73,15 @@ export abstract class Appliance extends ScreenElement {
     });
 
     this.on("pointerenter", (evt) => {
+      this.state = "hovered";
       this.eventEmitter.emit("hoverStart", new InteractEvent(this));
     });
 
     this.on("pointerleave", (evt) => {
       // Queue up a check for hover end. This event fires on click.
-      this.state = "end-hover";
+      if (this.state === "hovered") {
+        this.state = "end-hover";
+      }
     });
   }
 
@@ -96,7 +92,7 @@ export abstract class Appliance extends ScreenElement {
       !this.graphics.bounds.contains(engine.input.pointers.primary.lastWorldPos)
     ) {
       this.state = "idle";
-      engine.remove(this.tempHighlight);
+      engine.remove(this.activeIndicator);
       this.stopInteract();
       this.eventEmitter.emit("hoverEnd", new InteractEvent(this));
     }
@@ -105,11 +101,11 @@ export abstract class Appliance extends ScreenElement {
   public setActive(active: boolean, engine: Engine<any>) {
     if (active && !this.isActiveAppliance) {
       this.isActiveAppliance = true;
-      engine.add(this.tempHighlight);
+      this.addChild(this.activeIndicator);
       getRandomClickSound().play();
     } else if (!active) {
       this.isActiveAppliance = false;
-      engine.remove(this.tempHighlight);
+      engine.remove(this.activeIndicator);
     }
   }
 

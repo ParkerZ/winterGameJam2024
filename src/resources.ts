@@ -48,6 +48,7 @@ import orderBanner from "./images/tempOrderBanner.png";
 import sidePanel from "./images/tempSidePanel.png";
 import sidePanel2 from "./images/tempSidePanel2.png";
 import star from "./images/star.png";
+import starLarge from "./images/starLarge.png";
 import stove from "./images/stove.png";
 import stoveUpgrade from "./images/stoveUpgrade.png";
 import thoughtBubble from "./images/thoughtBubble.png";
@@ -57,6 +58,23 @@ import tomatoCrate from "./images/tomatoCrate.png";
 import tomatoSlice from "./images/tomatoSlice.png";
 import tooltip from "./images/tooltip.png";
 import trash from "./images/trash.png";
+import mainMenu from "./images/mainMenu.png";
+import gameOver from "./images/gameOver.png";
+import playButton from "./images/playButton.png";
+import tutorialButton from "./images/tutorialButton.png";
+import step1 from "./images/step1.png";
+import step2 from "./images/step2.png";
+import step3 from "./images/step3.png";
+import step4 from "./images/step4.png";
+import step5 from "./images/step5.png";
+import step6_1 from "./images/step6-1.png";
+import step6_2 from "./images/step6-2.png";
+import step7 from "./images/step7.png";
+import step8 from "./images/step8.png";
+import step9 from "./images/step9.png";
+import parallax from "./images/parallax.png";
+import parallax2 from "./images/parallax2.png";
+import dayCompleteModal from "./images/dayCompleteModal.png";
 
 import kitchenMusic from "./sounds/kitchenMusic.wav";
 import shopMusic from "./sounds/shopMusic.wav";
@@ -123,6 +141,7 @@ export const Resources = {
   OrderBanner: new ImageSource(orderBanner),
   SidePanel: new ImageSource(sidePanel2),
   Star: new ImageSource(star),
+  StarLarge: new ImageSource(starLarge),
   Stove: new ImageSource(stove),
   StoveUpgrade: new ImageSource(stoveUpgrade),
   ThoughtBubble: new ImageSource(thoughtBubble),
@@ -132,8 +151,27 @@ export const Resources = {
   TomatoCrate: new ImageSource(tomatoCrate),
   Tooltip: new ImageSource(tooltip),
   Trash: new ImageSource(trash),
+  MainMenu: new ImageSource(mainMenu),
+  GameOver: new ImageSource(gameOver),
+  PlayButton: new ImageSource(playButton),
+  TutorialButton: new ImageSource(tutorialButton),
+  Step1: new ImageSource(step1),
+  Step2: new ImageSource(step2),
+  Step3: new ImageSource(step3),
+  Step4: new ImageSource(step4),
+  Step5: new ImageSource(step5),
+  Step6_1: new ImageSource(step6_1),
+  Step6_2: new ImageSource(step6_2),
+  Step7: new ImageSource(step7),
+  Step8: new ImageSource(step8),
+  Step9: new ImageSource(step9),
+  Parallax: new ImageSource(parallax),
+  Parallax2: new ImageSource(parallax2),
+  DayCompleteModal: new ImageSource(dayCompleteModal),
+
   musicShop: new Sound(shopMusic),
   musicKitchen: new Sound(kitchenMusic),
+
   soundClick1: new Sound(click1),
   soundClick2: new Sound(click2),
   soundClick3: new Sound(click3),

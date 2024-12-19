@@ -17,7 +17,7 @@ export class BuzzCounter extends ScreenElement {
 
   constructor() {
     super({
-      pos: vec(1038, 44),
+      pos: vec(1036, 44),
       z: 2,
     });
 

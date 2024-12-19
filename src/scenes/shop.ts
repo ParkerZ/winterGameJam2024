@@ -15,13 +15,7 @@ import { GuestSimpleCash } from "@/guests/guestSimpleCash";
 import { GuestSimpleCashPlus } from "@/guests/guestSimpleCashPlus";
 import { GuestSimpleWatch } from "@/guests/guestSimpleWatch";
 import { PlayerData } from "@/playerData";
-import {
-  Resources,
-  colorLabel,
-  colorPrimaryBuzz,
-  musicVolume,
-  spriteScale,
-} from "@/resources";
+import { Resources, colorLabel, musicVolume } from "@/resources";
 import { BuzzCounter } from "@/ui/buzzCounter";
 import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
@@ -31,33 +25,41 @@ import { StarCounter } from "@/ui/starCounter";
 import {
   Engine,
   Font,
-  Label,
   Scene,
   SceneActivationContext,
   ScreenElement,
   Text,
   TextAlign,
-  Vector,
   vec,
 } from "excalibur";
 
 export class Shop extends Scene {
+  private bgParallaxElements: Array<ScreenElement> = [];
   override onInitialize(engine: Engine): void {
     Resources.musicShop.loop = true;
   }
 
   override onActivate(context: SceneActivationContext<unknown>): void {
     if (PlayerData.day >= PlayerData.maxDay) {
-      alert("Game over");
+      context.engine.goToScene("gameOver");
     }
 
     Resources.musicShop.play(musicVolume);
 
-    // const shopBackground = new ScreenElement({ z: -2 });
-    // const bgSprite = Resources.FloorBg.toSprite();
-    // bgSprite.scale = spriteScale;
-    // shopBackground.graphics.use(bgSprite);
-    // this.add(shopBackground);
+    this.bgParallaxElements = [
+      new ScreenElement({ z: -2, pos: vec(180 * -1, 1) }),
+      new ScreenElement({ z: -2, pos: vec(180 * 0, 0) }),
+      new ScreenElement({ z: -2, pos: vec(180 * 1, 0) }),
+      new ScreenElement({ z: -2, pos: vec(180 * 2, 0) }),
+      new ScreenElement({ z: -2, pos: vec(180 * 3, 0) }),
+      new ScreenElement({ z: -2, pos: vec(180 * 4, 0) }),
+    ];
+
+    this.bgParallaxElements.forEach((e) => {
+      e.graphics.use(Resources.Parallax.toSprite());
+      this.add(e);
+    });
+
     const topText = new ScreenElement({ pos: vec(425, 25) });
     const topTextSprite = new Text({
       text: "Add Guests To Your Invite List!",
@@ -215,5 +217,16 @@ export class Shop extends Scene {
     this.clear();
   }
 
-  override onPreUpdate(engine: Engine, elapsedMs: number): void {}
+  override onPreUpdate(engine: Engine, elapsedMs: number): void {
+    this.scrollParallax();
+  }
+
+  private scrollParallax() {
+    this.bgParallaxElements.forEach((e) => {
+      e.pos = e.pos.add(vec(0.5, -0.25));
+      if (e.pos.x >= 180 * 4 + 180) {
+        e.pos = vec(180 * -1, 0);
+      }
+    });
+  }
 }

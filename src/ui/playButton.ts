@@ -6,23 +6,30 @@ import {
 } from "@/resources";
 import { Engine, ScreenElement, Vector, vec } from "excalibur";
 
-export class OpenShopButton extends ScreenElement {
-  constructor({ pos = vec(430, 300) }: { pos?: Vector }) {
+export class PlayButton extends ScreenElement {
+  private isTutorialMode: boolean = false;
+
+  constructor(hasCompletedTutorial: boolean) {
     super({
-      pos,
+      pos: vec(300, hasCompletedTutorial ? 350 : 400),
       anchor: Vector.Half,
       z: 6,
     });
+
+    this.isTutorialMode = !hasCompletedTutorial;
   }
 
   onInitialize(engine: Engine<any>): void {
-    const sprite = Resources.ButtonNext.toSprite();
-    sprite.scale = nextButtonScale;
+    const sprite = Resources.PlayButton.toSprite();
     this.graphics.use(sprite);
 
     this.on("pointerup", () => {
       Resources.soundRight.play(orderVolume);
-      engine.goToScene("shop");
+      if (this.isTutorialMode) {
+        engine.goToScene("tutorial");
+      } else {
+        engine.goToScene("kitchen");
+      }
     });
 
     this.on("pointerenter", () => {

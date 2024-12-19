@@ -5,6 +5,7 @@ import { Appliance } from "./appliance";
 import { Mince } from "@/foodStuffs/mince";
 import { Food } from "@/foodStuffs/food";
 import { Patty } from "@/foodStuffs/patty";
+import { PlayerData } from "@/playerData";
 
 export class Stove extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
@@ -28,6 +29,8 @@ export class Stove extends Appliance {
     }
 
     Resources.soundSizzle.play(sizzleVolume);
+
+    PlayerData.onMinceCooking();
 
     this.heldItem = incomingItem;
     this.heldItem.unparent();
@@ -61,5 +64,6 @@ export class Stove extends Appliance {
     this.addChild(this.heldItem);
     this.heldItem.pos = vec(-3, -50);
     this.heldItem.z = 1;
+    PlayerData.onMinceCooking();
   }
 }

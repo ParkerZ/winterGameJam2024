@@ -3,7 +3,6 @@ import {
   Engine,
   Font,
   Label,
-  Rectangle,
   ScreenElement,
   Sprite,
   TextAlign,
@@ -36,6 +35,7 @@ import {
   orderVolume,
 } from "@/resources";
 import { easeOutBack } from "@/animations";
+import { HighlightArrow } from "@/ui/highlightArrow";
 
 export type GuestState =
   | "dormant"
@@ -84,6 +84,9 @@ export class Guest extends ScreenElement {
   protected enterElapsedTimeMs: number;
   protected enterTotalTimeMs: number = 400;
 
+  protected activeIndicator: Actor;
+  protected isShowingActive: boolean = false;
+
   public canBeAutoFulfilled: boolean = false;
 
   constructor({
@@ -106,6 +109,7 @@ export class Guest extends ScreenElement {
 
     this.eventEmitter = eventEmitter;
     this.state = GuestStates.Dormant;
+    this.activeIndicator = new HighlightArrow({ pos: vec(-16, -80) });
     if (sprite) {
       this.sprite = sprite;
       this.sprite.scale = guestScale;
@@ -134,7 +138,11 @@ export class Guest extends ScreenElement {
     this.on("pointerenter", () => {
       if (this.hoverState !== "end-hover") {
         getRandomClickSound().play();
+        if (this.eventEmitter) {
+          this.eventEmitter.emit("hoverStart", new GuestInteractEvent(this));
+        }
       }
+      this.hoverState = "hovered";
     });
 
     this.on("pointerleave", () => {
@@ -155,6 +163,9 @@ export class Guest extends ScreenElement {
       !this.graphics.bounds.contains(engine.input.pointers.primary.lastWorldPos)
     ) {
       this.hoverState = "idle";
+      if (this.eventEmitter)
+        this.eventEmitter.emit("hoverEnd", new GuestInteractEvent(this));
+
       if (this.tooltip && this.isTooltipActive) {
         engine.remove(this.tooltip);
         this.isTooltipActive = false;
@@ -200,47 +211,71 @@ export class Guest extends ScreenElement {
   public attachEventEmitter(eventEmitter: GuestEventEmitter) {
     this.eventEmitter = eventEmitter;
 
-    const arrowIndicator = new ScreenElement({
-      z: 2,
-      y: -45,
-      anchor: Vector.Half,
-    });
-    arrowIndicator.graphics.use(
-      Resources.ArrowDown.toSprite({ scale: vec(0.6, 0.6) })
-    );
-
     this.eventEmitter.on("removeActivate", () => {
       // add icon
-      this.addChild(arrowIndicator);
+      this.forceActive(true);
     });
 
     this.eventEmitter.on("autoFulfillActivate", () => {
       // conditionally add icon
       if (this.canBeAutoFulfilled) {
-        this.addChild(arrowIndicator);
+        this.forceActive(true);
       }
     });
 
     this.eventEmitter.on("removeConfirm", () => {
       // remove icon
-      if (this.children.includes(arrowIndicator)) {
-        this.removeChild(arrowIndicator);
-      }
+      this.forceActive(false);
     });
 
     this.eventEmitter.on("autoFulfillConfirm", () => {
       // remove icon
-      if (this.children.includes(arrowIndicator)) {
-        this.removeChild(arrowIndicator);
-      }
+      this.forceActive(false);
     });
 
     this.eventEmitter.on("abilityCancel", () => {
       // remove icon
-      if (this.children.includes(arrowIndicator)) {
-        this.removeChild(arrowIndicator);
-      }
+      this.forceActive(false);
     });
+  }
+
+  // Set icon state regardless of hover
+  private forceActive(active: boolean) {
+    if (this.state === GuestStates.Dormant) {
+      return;
+    }
+
+    if (active) {
+      if (
+        !this.isShowingActive &&
+        !this.children.includes(this.activeIndicator)
+      )
+        this.addChild(this.activeIndicator);
+      this.isShowingActive = true;
+    } else {
+      if (this.children.includes(this.activeIndicator))
+        this.removeChild(this.activeIndicator);
+      this.isShowingActive = false;
+    }
+  }
+
+  public setActive(active: boolean) {
+    if (this.state === GuestStates.Dormant) {
+      return;
+    }
+
+    if (active) {
+      if (!this.children.includes(this.activeIndicator)) {
+        this.addChild(this.activeIndicator);
+      }
+    } else {
+      if (
+        !this.isShowingActive &&
+        this.children.includes(this.activeIndicator)
+      ) {
+        this.removeChild(this.activeIndicator);
+      }
+    }
   }
 
   public onAddToScene() {
@@ -284,6 +319,8 @@ export class Guest extends ScreenElement {
       return;
     }
 
+    PlayerData.onGuestOrder();
+
     Resources.soundGrab.play(grabVolume);
 
     this.state = GuestStates.Ordering;
@@ -304,6 +341,7 @@ export class Guest extends ScreenElement {
   }
 
   public completeOrder() {
+    PlayerData.onCompleteOrder();
     this.eventEmitter.emit("clearOrder", new ClearOrderEvent(this));
     Resources.soundRight.play(orderVolume);
     this.reward.distribute();

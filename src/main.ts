@@ -3,6 +3,9 @@ import { colorSecondaryCash, loader } from "./resources";
 import { Kitchen } from "./scenes/kitchen";
 import { Shop } from "./scenes/shop";
 import "./main.css";
+import { MainMenu } from "./scenes/mainMenu";
+import { Tutorial } from "./scenes/tutorial";
+import { GameOver } from "./scenes/gameOver";
 
 async function waitForFontLoad(font, timeout = 2000, interval = 100) {
   return new Promise((resolve, reject) => {
@@ -31,29 +34,33 @@ const game = new Engine({
   scenes: {
     kitchen: {
       scene: Kitchen,
-      transitions: {
-        // in: new CrossFade({
-        //   duration: 500,
-        //   direction: "in",
-        //   blockInput: true,
-        // }),
-      },
+      transitions: {},
     },
     shop: {
       scene: Shop,
+      transitions: {},
+    },
+    mainMenu: {
+      scene: MainMenu,
+    },
+    tutorial: {
+      scene: Tutorial,
       transitions: {
-        // in: new CrossFade({
-        //   duration: 500,
-        //   direction: "in",
-        //   blockInput: true,
-        // }),
+        in: new CrossFade({
+          duration: 500,
+          direction: "in",
+          blockInput: true,
+        }),
       },
+    },
+    gameOver: {
+      scene: GameOver,
     },
   },
 });
 
 game
-  .start("shop", {
+  .start("mainMenu", {
     loader,
   })
   .then(() => {

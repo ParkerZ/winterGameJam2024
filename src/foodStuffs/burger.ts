@@ -25,10 +25,11 @@ const burgerIngredientXOffsetMap = {
 
 export class Burger extends Food {
   protected ingredients: Set<string>;
+  protected spriteScale: Vector;
 
-  constructor(ingredients: Set<string> = new Set()) {
+  constructor(ingredients: Set<string> = new Set(), scale = Vector.Half) {
     const sprite = Resources.BunBottom.toSprite();
-    sprite.scale = vec(0.5, 0.5);
+    sprite.scale = scale;
     super({
       name: "Burger",
       sprite,
@@ -38,6 +39,7 @@ export class Burger extends Food {
     this.ingredients = new Set(ingredients);
     this.isBurgerCompatible = true;
     this.isBurgerBase = true;
+    this.spriteScale = scale;
   }
 
   private updateGraphics() {
@@ -58,8 +60,9 @@ export class Burger extends Food {
     if (this.ingredients.has("Cheese")) sortedIngredients.push("Cheese");
 
     sortedIngredients.forEach((ingredient, i) => {
-      const newSprite = burgerIngredientSpriteMap[ingredient].toSprite();
-      newSprite.scale = vec(0.5, 0.5);
+      const newSprite = burgerIngredientSpriteMap[ingredient].toSprite({
+        scale: this.spriteScale,
+      });
       runningHeight += burgerIngredientHeightMap[ingredient];
       members.push({
         graphic: newSprite,
@@ -68,8 +71,7 @@ export class Burger extends Food {
     });
 
     runningHeight += 16;
-    const newSprite = Resources.BunTop.toSprite();
-    newSprite.scale = vec(0.5, 0.5);
+    const newSprite = Resources.BunTop.toSprite({ scale: this.spriteScale });
     members.push({
       graphic: newSprite,
       offset: vec(1, -1 * runningHeight),
@@ -84,8 +86,7 @@ export class Burger extends Food {
   onInitialize(engine: Engine<any>): void {
     super.onInitialize(engine);
 
-    const sp = Resources.Burger.toSprite();
-    sp.scale = Vector.Half;
+    const sp = Resources.Burger.toSprite({ scale: this.spriteScale });
     this.graphics.use(sp);
 
     this.updateGraphics();

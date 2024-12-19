@@ -40,13 +40,13 @@ export class Lettuce extends Food {
   }
 
   onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
-    if (this.state === "chopping") {
-      if (!this.isChopBarRendered) {
-        this.addChild(this.chopBar);
-        this.chopBar.setCurrVal(0);
-        this.isChopBarRendered = true;
-      }
+    if (!this.isChopBarRendered) {
+      this.addChild(this.chopBar);
+      this.chopBar.setCurrVal(0);
+      this.isChopBarRendered = true;
+    }
 
+    if (this.state === "chopping") {
       const now = Date.now();
       if (!this.lastChopCheckTime) {
         this.lastChopCheckTime = now;

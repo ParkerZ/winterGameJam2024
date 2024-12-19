@@ -23,19 +23,14 @@ import { CheeseCrate } from "../appliances/cheeseCrate";
 import { shuffleArray } from "../../util";
 import { Guest } from "../guests/guest";
 import { PlayerData } from "../playerData";
-import { OpenShopButton } from "../ui/openShopButton";
 import { BuzzCounter } from "@/ui/buzzCounter";
 import { CashCounter } from "@/ui/cashCounter";
 import { DayCounter } from "@/ui/dayCounter";
 import { LettuceCrate } from "@/appliances/lettuceCrate";
 import { StarCounter } from "@/ui/starCounter";
-import { GuestHardStarOne } from "@/guests/guestHardStarOne";
-import { GuestHardStarTwo } from "@/guests/guestHardStarTwo";
-import { GuestHardStarThree } from "@/guests/guestHardStarThree";
 import {
   Resources,
   allGuestsServedVolume,
-  colorLabel,
   dayEndVolume,
   musicVolume,
   spriteScale,
@@ -43,6 +38,7 @@ import {
 import { StatusBar } from "@/ui/statusBar";
 import { DeckCounter } from "@/ui/deckCounter";
 import { GuestHardStar } from "@/guests/guestHardStar";
+import { DayCompleteModal } from "@/ui/dayCompleteModal";
 
 const GUEST_SPAWN_TIME_MS = 1000;
 
@@ -109,7 +105,6 @@ export class Kitchen extends Scene {
       maxVal: this.maxTimeMS,
       size: "lg",
     });
-    // this.timeBar.setPos(vec(477, 555));
     this.add(this.timeBar);
 
     const timeLabel = new ScreenElement({ pos: vec(85, 522), z: 5 });
@@ -224,6 +219,10 @@ export class Kitchen extends Scene {
   }
 
   override onPreUpdate(engine: Engine, elapsedMs: number): void {
+    if (PlayerData.star >= 3) {
+      engine.goToScene("gameOver");
+    }
+
     if (!this.isDayActive) {
       return;
     }
@@ -231,7 +230,7 @@ export class Kitchen extends Scene {
     const now = Date.now();
     if (now - this.startTime >= this.maxTimeMS) {
       Resources.soundDayEnd.play(dayEndVolume);
-      this.endDay();
+      this.endDay("You ran out of time...");
       return;
     }
 
@@ -278,7 +277,7 @@ export class Kitchen extends Scene {
     this.numGuestsServed++;
     if (this.numGuestsServed === this.guestCount) {
       Resources.soundAllGuestsServed.play(allGuestsServedVolume);
-      this.endDay();
+      this.endDay("You served all of\nyour guests!");
       return;
     }
 
@@ -317,11 +316,15 @@ export class Kitchen extends Scene {
     return guest;
   }
 
-  private endDay() {
+  private endDay(text: string) {
     this.isDayActive = false;
     this.remove(this.glove);
     this.glove.kill();
-    const button = new OpenShopButton();
-    this.add(button);
+    PlayerData.deck.forEach((g) => {
+      this.remove(g);
+      g.kill();
+    });
+    const modal = new DayCompleteModal({ text });
+    this.add(modal);
   }
 }

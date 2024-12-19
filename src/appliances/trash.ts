@@ -3,6 +3,7 @@ import { Resources, spriteScale } from "../resources";
 import { ApplianceEventEmitter } from "../events";
 import { Appliance } from "./appliance";
 import { Food } from "@/foodStuffs/food";
+import { PlayerData } from "@/playerData";
 
 export class Trash extends Appliance {
   constructor(applianceEventEmitter: ApplianceEventEmitter, pos: Vector) {
@@ -20,6 +21,7 @@ export class Trash extends Appliance {
   public setHeldItem(incomingItem: Food): boolean {
     incomingItem.unparent();
     incomingItem.kill();
+    PlayerData.onTrashItem();
     return true;
   }
 

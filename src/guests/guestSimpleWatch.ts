@@ -46,8 +46,9 @@ export class GuestSimpleWatch extends Guest {
     this.eventEmitter.on("clearOrder", (evt) => {
       // Skip if not in the store
       if (
-        this.state !== GuestStates.Idle &&
-        this.state !== GuestStates.Ordering
+        (this.state !== GuestStates.Idle &&
+          this.state !== GuestStates.Ordering) ||
+        !this.isActive
       ) {
         return;
       }

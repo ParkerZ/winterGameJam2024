@@ -12,16 +12,16 @@ import {
 
 export class InviteGuestButton extends ScreenElement {
   private price: number;
-  private isDisabled: boolean;
+  private isDisabledCallback: () => boolean;
 
-  constructor(price: number, pos: Vector, isDisabled: boolean) {
+  constructor(price: number, pos: Vector, isDisabledCallback: () => boolean) {
     super({
       anchor: Vector.Half,
       pos,
     });
 
     this.price = price;
-    this.isDisabled = isDisabled;
+    this.isDisabledCallback = isDisabledCallback;
   }
 
   onInitialize(engine: Engine<any>): void {
@@ -29,8 +29,7 @@ export class InviteGuestButton extends ScreenElement {
   }
 
   onPostUpdate(engine: Engine<any>, elapsedMs: number): void {
-    if (!this.isDisabled && PlayerData.buzz < this.price) {
-      this.isDisabled = true;
+    if (this.isDisabledCallback()) {
       this.updateGraphics();
     }
   }
@@ -49,7 +48,7 @@ export class InviteGuestButton extends ScreenElement {
           family: "Kaph",
           size: 36,
           textAlign: TextAlign.Center,
-          color: this.isDisabled ? colorLabel : colorPrimaryBuzz,
+          color: this.isDisabledCallback() ? colorLabel : colorPrimaryBuzz,
         }),
         anchor: Vector.Half,
       })

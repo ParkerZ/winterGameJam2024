@@ -96,6 +96,8 @@ export class OrderInteractEvent extends GameEvent<GuestOrder> {
 export type GuestEvents = {
   interact: GuestInteractEvent;
   interactOrder: OrderInteractEvent;
+  hoverStart: GuestInteractEvent;
+  hoverEnd: GuestInteractEvent;
   clearOrder: ClearOrderEvent;
   autoFulfillActivate: AbilityActivateEvent;
   autoFulfillConfirm: AbilityCompleteEvent;

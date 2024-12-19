@@ -73,7 +73,7 @@ export class GuestInviteCard extends ScreenElement {
     const button = new InviteGuestButton(
       this.buzzCost,
       vec(0, 60),
-      getIsDisabled()
+      getIsDisabled
     );
     this.addChild(button);
 
@@ -88,7 +88,6 @@ export class GuestInviteCard extends ScreenElement {
         Resources.soundWrong.play(orderVolume);
       }
     });
-    // }
   }
 
   private getCountText(): string {

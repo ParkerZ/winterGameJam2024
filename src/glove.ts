@@ -41,6 +41,7 @@ export class Glove extends ScreenElement {
   protected guestInteractionOverride: GuestInteractionOverride;
 
   protected activeAppliances: Array<Appliance> = [];
+  protected activeGuest: Guest | null = null;
 
   constructor(
     applianceEventEmitter: ApplianceEventEmitter,
@@ -94,6 +95,7 @@ export class Glove extends ScreenElement {
       }
     });
 
+    // Appliances can overlap other appliances and guests
     this.applianceEventEmitter.on("hoverStart", (evt) => {
       if (
         this.guestInteractionOverride === GuestInteractionOverrides.None &&
@@ -103,24 +105,60 @@ export class Glove extends ScreenElement {
         this.activeAppliances.forEach((app) => app.setActive(false, engine));
         evt.appliance.setActive(true, engine);
         this.activeAppliances.unshift(evt.appliance);
+
+        if (this.activeGuest) {
+          this.activeGuest.setActive(false);
+        }
       }
     });
 
     this.applianceEventEmitter.on("hoverEnd", (evt) => {
-      if (this.guestInteractionOverride === GuestInteractionOverrides.None) {
-        // Set unhovered to inactive, remove from list, and set first remaining to active
-        const index = this.activeAppliances.findIndex(
-          (appliance) => appliance === evt.appliance
-        );
+      if (
+        this.guestInteractionOverride === GuestInteractionOverrides.None &&
+        this.activeAppliances.includes(evt.appliance)
+      ) {
+        // Remove all unhovered activeAppliances, set first remaining to active
+        this.activeAppliances = this.activeAppliances.filter((app) => {
+          const isHovered = app.graphics.bounds.contains(
+            engine.input.pointers.primary.lastWorldPos
+          );
 
-        if (index > -1) {
-          this.activeAppliances[index].setActive(false, engine);
-          this.activeAppliances.splice(index, 1);
-        }
+          if (!isHovered) {
+            app.setActive(false, engine);
+          }
+
+          return isHovered;
+        });
 
         if (this.activeAppliances.length) {
           this.activeAppliances[0].setActive(true, engine);
+        } else if (this.activeGuest) {
+          this.activeGuest.setActive(true);
         }
+      }
+    });
+
+    // Guests can overlap appliances
+    this.guestEventEmitter.on("hoverStart", (evt) => {
+      if (
+        this.guestInteractionOverride === GuestInteractionOverrides.None &&
+        this.activeGuest === null
+      ) {
+        this.activeGuest = evt.guest;
+
+        if (!this.activeAppliances.length) {
+          this.activeGuest.setActive(true);
+        }
+      }
+    });
+
+    this.guestEventEmitter.on("hoverEnd", (evt) => {
+      if (
+        this.guestInteractionOverride === GuestInteractionOverrides.None &&
+        this.activeGuest === evt.guest
+      ) {
+        this.activeGuest.setActive(false);
+        this.activeGuest = null;
       }
     });
 
@@ -194,6 +232,8 @@ export class Glove extends ScreenElement {
             // If successful, clear items and hold on to resulting burger
             this.holdBurger(burger);
             shouldReturnItem = false;
+
+            PlayerData.onBurgerMade(burger);
           }
         } else if (!this.heldItem.isBurgerBase && otherItem.isBurgerBase) {
           // Try to combine ingredients using other item as base
@@ -202,6 +242,8 @@ export class Glove extends ScreenElement {
             otherItem
           );
           if (burger) {
+            PlayerData.onBurgerMade(burger);
+
             // If successful, give resulting burger to appliance UNLESS it is a bun crate
             if (appliance instanceof BunCrate) {
               this.holdBurger(burger);

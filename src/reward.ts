@@ -21,14 +21,12 @@ export class Reward {
 
   public distribute() {
     PlayerData.buzz = Math.max(PlayerData.buzz + this.buzz, 0);
+    PlayerData.buzzEarned = Math.max(PlayerData.buzzEarned + this.buzz, 0);
     PlayerData.cash = Math.max(PlayerData.cash + this.cash, 0);
+    PlayerData.cashEarned = Math.max(PlayerData.cashEarned + this.cash, 0);
 
     if (this.star) {
       PlayerData.star += this.star;
-    }
-
-    if (PlayerData.star === 3) {
-      alert("You win");
     }
   }
 }

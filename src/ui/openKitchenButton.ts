@@ -7,9 +7,9 @@ import {
 import { Engine, ScreenElement, Vector, vec } from "excalibur";
 
 export class OpenKitchenButton extends ScreenElement {
-  constructor() {
+  constructor(pos?: Vector) {
     super({
-      pos: vec(710, 500),
+      pos: pos ?? vec(710, 500),
       anchor: Vector.Half,
       z: 6,
     });
